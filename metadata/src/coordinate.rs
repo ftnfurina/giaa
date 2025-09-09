@@ -131,6 +131,10 @@ impl Coordinate {
                 return Ok(coord);
             }
         }
-        Err(anyhow!("没有找到适配分辨率为 {:?} 的坐标数据", resolution))
+        Err(anyhow!(
+            "没有找到适配分辨率为 ({}x{}) 的坐标数据",
+            resolution.width,
+            resolution.height
+        ))
     }
 }

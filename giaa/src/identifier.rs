@@ -23,6 +23,7 @@ pub struct ArtifactIdentify {
     pub main_stat_value: bool,
     pub stars: bool,
     pub sub_stats: bool,
+    pub sub_stats_count: bool,
     pub set_name: bool,
     pub equipped: bool,
     pub level: bool,
@@ -38,6 +39,7 @@ impl ArtifactIdentify {
             main_stat_value: false,
             stars: false,
             sub_stats: false,
+            sub_stats_count: false,
             set_name: false,
             equipped: false,
             level: false,
@@ -89,15 +91,23 @@ impl ArtifactIdentify {
             }
         }
 
+        if all_keys.contains(&artifact_info.words.sub_stats_count) {
+            di.sub_stats_count = true;
+        }
+
         for stat in artifact_info.stats.iter() {
             if all_keys.contains(&format!("{}:{}", artifact_info.words.main_stat, stat)) {
                 di.main_stat = true;
                 di.main_stat_value = true;
             }
-            // 套装名依赖圣遗物副词条, 所有需要同步开启
-            if di.set_name || all_keys.contains(stat) {
+            if all_keys.contains(stat) {
                 di.sub_stats = true;
             }
+        }
+
+        // 套装名和副词条个数依赖圣遗物副词条, 所有需要同步开启
+        if di.set_name || di.sub_stats_count {
+            di.sub_stats = true;
         }
 
         if all_keys.contains(&artifact_info.words.equipped) {

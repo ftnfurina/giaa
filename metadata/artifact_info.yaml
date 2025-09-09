@@ -7,6 +7,7 @@ words:
   locked: 已锁定
   marked: 已标记
   sanctifying_elixir: 祝圣之霜定义
+  sub_stats_count: 副词条个数
   no_match_artifacts: 暂无满足条件的圣遗物
 
 slots:

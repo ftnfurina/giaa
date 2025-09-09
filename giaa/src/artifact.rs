@@ -78,6 +78,7 @@ impl Artifact {
         for (name, value) in self.sub_stats.iter() {
             result.insert(name.clone(), *value);
         }
+        result.insert(words.sub_stats_count.clone(), self.sub_stats.len() as f32);
 
         return result;
     }

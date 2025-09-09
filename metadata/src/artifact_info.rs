@@ -43,6 +43,8 @@ pub struct ArtifactWord {
     pub sanctifying_elixir: String,
     #[schemars(title = "主词条前缀")]
     pub main_stat: String,
+    #[schemars(title = "副词条个数")]
+    pub sub_stats_count: String,
 
     #[schemars(title = "暂无满足条件的圣遗物")]
     pub no_match_artifacts: String,
@@ -151,7 +153,11 @@ impl ArtifactInfo {
 
     /// 获取所有数字型关键字
     pub fn get_number_keys(&self) -> Vec<String> {
-        let mut result = vec![self.words.star.clone(), self.words.level.clone()];
+        let mut result = vec![
+            self.words.star.clone(),
+            self.words.level.clone(),
+            self.words.sub_stats_count.clone(),
+        ];
 
         for stat in self.stats.iter() {
             result.push(stat.clone());

@@ -130,6 +130,10 @@
         "star": {
           "title": "星级",
           "type": "string"
+        },
+        "sub_stats_count": {
+          "title": "副词条个数",
+          "type": "string"
         }
       },
       "required": [
@@ -141,6 +145,7 @@
         "marked",
         "sanctifying_elixir",
         "main_stat",
+        "sub_stats_count",
         "no_match_artifacts"
       ]
     }
