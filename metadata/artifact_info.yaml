@@ -1,0 +1,456 @@
+words:
+  artifact: 圣遗物
+  star: 星级
+  level: 等级
+  main_stat: 主
+  equipped: 已装备
+  locked: 已锁定
+  marked: 已标记
+  sanctifying_elixir: 祝圣之霜定义
+  no_match_artifacts: 暂无满足条件的圣遗物
+
+slots:
+  - 生之花
+  - 死之羽
+  - 时之沙
+  - 空之杯
+  - 理之冠
+
+stats:
+  - 生命值百分比
+  - 暴击伤害
+  - 暴击率
+  - 元素充能效率
+  - 攻击力
+  - 攻击力百分比
+  - 防御力
+  - 防御力百分比
+  - 生命值
+  - 元素精通
+  - 治疗加成
+  - 物理伤害加成
+  - 火元素伤害加成
+  - 水元素伤害加成
+  - 草元素伤害加成
+  - 雷元素伤害加成
+  - 风元素伤害加成
+  - 冰元素伤害加成
+  - 岩元素伤害加成
+
+sets:
+  - name: 行者之心
+    artifacts:
+      - name: 故人之心
+      - name: 归乡之羽
+      - name: 逐光之石
+      - name: 异国之盏
+      - name: 感别之冠
+  - name: 勇士之心
+    artifacts:
+      - name: 勇士的勋章
+      - name: 勇士的期许
+      - name: 勇士的坚毅
+      - name: 勇士的壮行
+      - name: 勇士的冠冕
+  - name: 守护之心
+    artifacts:
+      - name: 守护之花
+      - name: 守护徽印
+      - name: 守护座钟
+      - name: 守护之皿
+      - name: 守护束带
+  - name: 奇迹
+    artifacts:
+      - name: 奇迹之花
+      - name: 奇迹之羽
+      - name: 奇迹之沙
+      - name: 奇迹之杯
+      - name: 奇迹耳坠
+  - name: 战狂
+    artifacts:
+      - name: 战狂的蔷薇
+      - name: 战狂的翎羽
+      - name: 战狂的时计
+      - name: 战狂的骨杯
+      - name: 战狂的鬼面
+  - name: 武人
+    artifacts:
+      - name: 武人的红花
+      - name: 武人的羽饰
+      - name: 武人的水漏
+      - name: 武人的酒杯
+      - name: 武人的头巾
+  - name: 教官
+    artifacts:
+      - name: 教官的胸花
+      - name: 教官的羽饰
+      - name: 教官的怀表
+      - name: 教官的茶杯
+      - name: 教官的帽子
+  - name: 赌徒
+    artifacts:
+      - name: 赌徒的胸花
+      - name: 赌徒的羽饰
+      - name: 赌徒的怀表
+      - name: 赌徒的骰盅
+        alias:
+          - 赌徒的般盅
+      - name: 赌徒的耳环
+  - name: 流放者
+    artifacts:
+      - name: 流放者之花
+      - name: 流放者之羽
+      - name: 流放者怀表
+      - name: 流放者之杯
+      - name: 流放者头冠
+  - name: 冒险家
+    artifacts:
+      - name: 冒险家之花
+      - name: 冒险家尾羽
+      - name: 冒险家怀表
+      - name: 冒险家金杯
+      - name: 冒险家头带
+  - name: 幸运儿
+    artifacts:
+      - name: 幸运儿绿花
+      - name: 幸运儿鹰羽
+      - name: 幸运儿沙漏
+      - name: 幸运儿之杯
+      - name: 幸运儿银冠
+  - name: 学士
+    artifacts:
+      - name: 学士的书签
+      - name: 学士的羽笔
+      - name: 学士的时钟
+      - name: 学士的墨杯
+      - name: 学士的镜片
+  - name: 游医
+    artifacts:
+      - name: 游医的银莲
+      - name: 游医的枭羽
+      - name: 游医的怀钟
+      - name: 游医的药壶
+      - name: 游医的方巾
+  - name: 冰风迷途的勇士
+    artifacts:
+      - name: 历经风雪的思念
+      - name: 摧冰而行的执望
+      - name: 冰雪故园的终期
+      - name: 遍结寒霜的傲骨
+      - name: 破冰踏雪的回音
+  - name: 平息鸣雷的尊者
+    artifacts:
+      - name: 平雷之心
+      - name: 平雷之羽
+      - name: 平雷之刻
+      - name: 平雷之器
+      - name: 平雷之冠
+  - name: 渡过烈火的贤人
+    artifacts:
+      - name: 渡火者的决绝
+      - name: 渡火者的解脱
+      - name: 渡火者的煎熬
+      - name: 渡火者的醒悟
+      - name: 渡火者的智慧
+  - name: 被怜爱的少女
+    artifacts:
+      - name: 远方的少女之心
+      - name: 少女飘摇的思念
+      - name: 少女苦短的良辰
+      - name: 少女片刻的闲暇
+      - name: 少女易逝的芳颜
+  - name: 角斗士的终幕礼
+    artifacts:
+      - name: 角斗士的留恋
+      - name: 角斗士的归宿
+      - name: 角斗士的希冀
+      - name: 角斗士的酣醉
+      - name: 角斗士的凯旋
+  - name: 翠绿之影
+    artifacts:
+      - name: 野花记忆的绿野
+      - name: 猎人青翠的箭羽
+      - name: 翠绿猎人的笃定
+      - name: 翠绿猎人的容器
+      - name: 翠绿的猎人之冠
+  - name: 流浪大地的乐团
+    artifacts:
+      - name: 乐团的晨光
+      - name: 琴师的箭羽
+      - name: 终幕的时计
+      - name: 吟游者之壶
+      - name: 指挥的礼帽
+  - name: 如雷的盛怒
+    artifacts:
+      - name: 雷鸟的怜悯
+      - name: 雷灾的孑遗
+        alias:
+          - 雷灾的子遗
+      - name: 雷霆的时计
+      - name: 降雷的凶兆
+      - name: 唤雷的头冠
+  - name: 炽烈的炎之魔女
+    artifacts:
+      - name: 魔女的炎之花
+      - name: 魔女常燃之羽
+      - name: 魔女破灭之时
+      - name: 魔女的心之火
+      - name: 焦灼的魔女帽
+  - name: 昔日宗室之仪
+    artifacts:
+      - name: 宗室之花
+      - name: 宗室之翎
+      - name: 宗室时计
+      - name: 宗室银瓮
+      - name: 宗室面具
+  - name: 染血的骑士道
+    artifacts:
+      - name: 染血的铁之心
+      - name: 染血的黑之羽
+      - name: 骑士染血之时
+      - name: 染血骑士之杯
+      - name: 染血的铁假面
+  - name: 祭火之人
+    artifacts:
+      - name: 祭火礼冠
+  - name: 祭水之人
+    artifacts:
+      - name: 祭水礼冠
+  - name: 祭雷之人
+    artifacts:
+      - name: 祭雷礼冠
+  - name: 祭冰之人
+    artifacts:
+      - name: 祭冰礼冠
+  - name: 悠古的磐岩
+    artifacts:
+      - name: 磐陀裂生之花
+      - name: 嵯峨群峰之翼
+      - name: 星罗圭璧之晷
+        alias:
+          - 星罗圭璧之
+      - name: 巉岩琢塑之樽
+        alias:
+          - 岩琢塑之樽
+      - name: 不动玄石之相
+  - name: 逆飞的流星
+    artifacts:
+      - name: 夏祭之花
+        alias:
+          - 夏察之花
+      - name: 夏祭终末
+        alias:
+          - 夏察终末
+      - name: 夏祭之刻
+        alias:
+          - 夏察之刻
+      - name: 夏祭水玉
+        alias:
+          - 夏察水玉
+      - name: 夏祭之面
+        alias:
+          - 夏察之面
+  - name: 沉沦之心
+    artifacts:
+      - name: 饰金胸花
+      - name: 追忆之风
+      - name: 坚铜罗盘
+      - name: 沉波之盏
+      - name: 酒渍船帽
+  - name: 千岩牢固
+    alias:
+      - 干岩牢固
+    artifacts:
+      - name: 勋绩之花
+      - name: 昭武翎羽
+      - name: 金铜时晷
+        alias:
+          - 金铜时
+          - 金铜时号
+      - name: 盟誓金爵
+      - name: 将帅兜鍪
+        alias:
+          - 将帅兜
+          - 将帅兜鳌
+  - name: 苍白之火
+    artifacts:
+      - name: 无垢之花
+      - name: 贤医之羽
+      - name: 停摆之刻
+      - name: 超越之盏
+      - name: 嗤笑之面
+        alias:
+          - 笑之面
+  - name: 追忆之注连
+    artifacts:
+      - name: 羁缠之花
+      - name: 思忆之矢
+      - name: 朝露之时
+      - name: 祈望之心
+      - name: 无常之面
+  - name: 绝缘之旗印
+    artifacts:
+      - name: 明威之镡
+        alias:
+          - 明威之
+      - name: 切落之羽
+      - name: 雷云之笼
+      - name: 绯花之壶
+      - name: 华饰之兜
+  - name: 华馆梦醒形骸记
+    artifacts:
+      - name: 荣花之期
+      - name: 华馆之羽
+      - name: 众生之谣
+      - name: 梦醒之瓢
+        alias:
+          - 梦醒之飘
+      - name: 形骸之笠
+  - name: 海染砗磲
+    alias:
+      - 海染碟
+    artifacts:
+      - name: 海染之花
+      - name: 渊宫之羽
+      - name: 离别之贝
+      - name: 真珠之笼
+      - name: 海祇之冠
+        alias:
+          - 海祗之冠
+          - 海张之冠
+  - name: 辰砂往生录
+    artifacts:
+      - name: 生灵之华
+      - name: 潜光片羽
+      - name: 阳辔之遗
+        alias:
+          - 阳窖之遗
+      - name: 结契之刻
+      - name: 虺雷之姿
+        alias:
+          - 雷之姿
+  - name: 来歆余响
+    artifacts:
+      - name: 魂香之花
+      - name: 垂玉之叶
+      - name: 祝祀之凭
+      - name: 涌泉之盏
+      - name: 浮溯之珏
+  - name: 深林的记忆
+    artifacts:
+      - name: 迷宫的游人
+      - name: 翠蔓的智者
+      - name: 贤智的定期
+      - name: 迷误者之灯
+      - name: 月桂的宝冠
+  - name: 饰金之梦
+    artifacts:
+      - name: 梦中的铁花
+      - name: 裁断的翎羽
+      - name: 沉金的岁月
+      - name: 如蜜的终宴
+      - name: 沙王的投影
+  - name: 沙上楼阁史话
+    artifacts:
+      - name: 众王之都的开端
+      - name: 黄金邦国的结末
+      - name: 失落迷途的机芯
+      - name: 迷醉长梦的守护
+      - name: 流沙贵嗣的遗宝
+  - name: 乐园遗落之花
+    artifacts:
+      - name: 月女的华彩
+      - name: 谢落的筵席
+      - name: 凝结的时刻
+      - name: 守秘的魔瓶
+      - name: 紫晶的花冠
+  - name: 水仙之梦
+    artifacts:
+      - name: 旅途中的鲜花
+      - name: 坏巫师的羽杖
+      - name: 水仙的时时刻刻
+      - name: 勇者们的茶会
+      - name: 恶龙的单片镜
+  - name: 花海甘露之光
+    artifacts:
+      - name: 灵光源起之蕊
+      - name: 琦色灵彩之羽
+      - name: 久远花落之时
+      - name: 无边酣乐之筵
+        alias:
+          - 无边酣乐之笼
+      - name: 灵光明烁之心
+  - name: 逐影猎人
+    artifacts:
+      - name: 猎人的胸花
+      - name: 杰作的序曲
+      - name: 裁判的时刻
+      - name: 遗忘的容器
+      - name: 老兵的容颜
+  - name: 黄金剧团
+    artifacts:
+      - name: 黄金乐曲的变奏
+      - name: 黄金飞鸟的落羽
+      - name: 黄金时代的先声
+      - name: 黄金之夜的喧嚣
+      - name: 黄金剧团的奖赏
+  - name: 昔时之歌
+    artifacts:
+      - name: 昔时遗落之誓
+      - name: 昔时浮想之思
+      - name: 昔时回映之音
+      - name: 昔时应许之梦
+      - name: 昔时传奏之诗
+  - name: 回声之林夜话
+    artifacts:
+      - name: 无私的妆饰花
+      - name: 诚恳的蘸水笔
+      - name: 忠实的砂时计
+      - name: 慷慨的墨水瓶
+      - name: 慈爱的淑女帽
+  - name: 谐律异想断章
+    artifacts:
+      - name: 谐律交响的前奏
+      - name: 古海玄幽的夜想
+      - name: 命途轮转的谐谑
+      - name: 灵露倾洒的狂诗
+      - name: 异想零落的圆舞
+  - name: 未竟的遐思
+    artifacts:
+      - name: 暗结的明花
+      - name: 褪光的翠尾
+      - name: 举业的识刻
+      - name: 筹谋的共樽
+      - name: 失冕的宝冠
+  - name: 烬城勇者绘卷
+    alias:
+      - 炽城勇者绘卷
+    artifacts:
+      - name: 驯兽师的护符
+      - name: 巡山客的信标
+      - name: 秘术家的金盘
+      - name: 游学者的爪杯
+      - name: 魔战士的羽面
+  - name: 黑曜秘典
+    artifacts:
+      - name: 异种的期许
+      - name: 灵髓的根脉
+      - name: 夜域的迷思
+      - name: 纷争的前宴
+      - name: 诸圣的礼冠
+  - name: 长夜之誓
+    artifacts:
+      - name: 执灯人的誓词
+      - name: 夜鸣莺的尾羽
+      - name: 不死者的哀铃
+      - name: 未吹响的号角
+      - name: 被浸染的缨盔
+  - name: 深廊终曲
+    artifacts:
+      - name: 深廊的回奏之歌
+      - name: 深廊的漫远之约
+      - name: 深廊的湮落之刻
+      - name: 深廊的饫赐之宴
+        alias:
+          - 深廊的赐之宴
+      - name: 深廊的遂失之冕

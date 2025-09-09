@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ArtifactInfo",
+  "description": "圣遗物信息",
+  "type": "object",
+  "properties": {
+    "sets": {
+      "title": "圣遗物套装",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ArtifactSet"
+      }
+    },
+    "slots": {
+      "title": "圣遗物部位名称",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stats": {
+      "title": "圣遗物属性名称",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "words": {
+      "title": "圣遗物词汇",
+      "$ref": "#/$defs/ArtifactWord"
+    }
+  },
+  "required": [
+    "slots",
+    "stats",
+    "sets",
+    "words"
+  ],
+  "$defs": {
+    "Artifact": {
+      "description": "圣遗物名称",
+      "type": "object",
+      "properties": {
+        "alias": {
+          "title": "圣遗物别名(可用于 OCR 识别异常补救)",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "title": "圣遗物名称",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ArtifactSet": {
+      "description": "圣遗物套装",
+      "type": "object",
+      "properties": {
+        "alias": {
+          "title": "套装别名(可用于 OCR 识别异常补救)",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "artifacts": {
+          "title": "圣遗物",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Artifact"
+          }
+        },
+        "name": {
+          "title": "套装名称",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "artifacts"
+      ]
+    },
+    "ArtifactWord": {
+      "description": "圣遗物相关词汇",
+      "type": "object",
+      "properties": {
+        "artifact": {
+          "title": "圣遗物",
+          "type": "string"
+        },
+        "equipped": {
+          "title": "已装备",
+          "type": "string"
+        },
+        "level": {
+          "title": "等级",
+          "type": "string"
+        },
+        "locked": {
+          "title": "已锁定",
+          "type": "string"
+        },
+        "main_stat": {
+          "title": "主词条前缀",
+          "type": "string"
+        },
+        "marked": {
+          "title": "已标记",
+          "type": "string"
+        },
+        "no_match_artifacts": {
+          "title": "暂无满足条件的圣遗物",
+          "type": "string"
+        },
+        "sanctifying_elixir": {
+          "title": "祝圣之霜定义",
+          "type": "string"
+        },
+        "star": {
+          "title": "星级",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact",
+        "star",
+        "level",
+        "equipped",
+        "locked",
+        "marked",
+        "sanctifying_elixir",
+        "main_stat",
+        "no_match_artifacts"
+      ]
+    }
+  }
+}

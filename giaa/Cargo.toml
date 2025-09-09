@@ -1,0 +1,23 @@
+[package]
+name = "giaa"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+common = { version = "0.1.0", path = "../common" }
+metadata = { version = "0.1.0", path = "../metadata" }
+ocr = { version = "0.1.0", path = "../ocr" }
+parser = { version = "0.1.0", path = "../parser" }
+window = { version = "0.1.0", path = "../window" }
+anyhow = "1.0.99"
+image = "0.25.8"
+schemars = "1.0.4"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_yaml = "0.9.34"
+clap = { version = "4.5.47", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3.20", features = [
+  "fmt",
+  "env-filter",
+  "chrono",
+] }

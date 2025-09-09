@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "1yib.rust-bundle",
+    "gruntfuggly.todo-tree",
+    "tamasfe.even-better-toml",
+    "usernamehw.errorlens",
+    "editorconfig.editorconfig"
+  ]
+}

@@ -1,0 +1,10 @@
+[package]
+name = "parser"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.99"
+peg = "0.8.5"
+rust_decimal = { version = "1.37.2", features = ["macros"] }
+tracing = "0.1"

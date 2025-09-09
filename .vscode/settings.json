@@ -1,0 +1,33 @@
+{
+  "cSpell.words": [
+    "chrono",
+    "enigo",
+    "ftnfurina",
+    "genshin",
+    "giaa",
+    "imageops",
+    "ndarray",
+    "onnx",
+    "ownedrepr",
+    "paddlepaddle",
+    "pdiparams",
+    "preds",
+    "schemars",
+    "serde",
+    "setuptools",
+    "windowinfo",
+    "xcap"
+  ],
+  "cSpell.ignorePaths": [
+    ".git/{info,lfs,logs,refs,objects}/**",
+    ".git/{index,*refs,*HEAD}",
+    ".vscode",
+    "*.lock",
+    ".git*"
+  ],
+  "yaml.schemas": {
+    ".vscode/artifact_info.schema.json": "metadata/artifact_info.yaml",
+    ".vscode/coordinate.schema.json": "metadata/coordinates/*.yaml",
+    ".vscode/rules.schema.json": "rules.yaml",
+  },
+}

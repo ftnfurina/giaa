@@ -1,0 +1,30 @@
+[project]
+name = "train"
+version = "0.1.0"
+description = "模型格式转换"
+authors = [{ name = "ftnfurina", email = "ftnfurina@gmail.com" }]
+dependencies = [
+  "paddle2onnx>=2.0.2rc3",
+  "paddlepaddle>=3.1.1",
+  "packaging>=25.0",
+  "setuptools>=80.9.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.rye.scripts]
+build-onnx = "python -m scripts.build_onnx"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]

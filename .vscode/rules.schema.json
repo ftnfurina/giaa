@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Array_of_Rule",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/Rule"
+  },
+  "$defs": {
+    "Rule": {
+      "description": "规则",
+      "type": "object",
+      "properties": {
+        "action": {
+          "title": "表达式命中后执行操作",
+          "$ref": "#/$defs/RuleAction"
+        },
+        "description": {
+          "title": "规则描述",
+          "type": "string"
+        },
+        "expression": {
+          "title": "规则表达式",
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "expression",
+        "action"
+      ]
+    },
+    "RuleAction": {
+      "description": "操作动作",
+      "oneOf": [
+        {
+          "title": "点击锁定",
+          "type": "string",
+          "const": "点击锁定"
+        },
+        {
+          "title": "点击标记",
+          "type": "string",
+          "const": "点击标记"
+        },
+        {
+          "title": "锁定",
+          "type": "string",
+          "const": "锁定"
+        },
+        {
+          "title": "仅锁定",
+          "type": "string",
+          "const": "仅锁定"
+        },
+        {
+          "title": "锁定和标记",
+          "type": "string",
+          "const": "锁定和标记"
+        },
+        {
+          "title": "取消锁定和标记",
+          "type": "string",
+          "const": "取消锁定和标记"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+name: Build GIAA App
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 构建 GIAA 程序
+        uses: houseabsolute/actions-rust-cross@v1
+        with:
+          command: build
+          target: x86_64-pc-windows-msvc
+          args: --locked --release --bin giaa
+      - name: 上传资产文件
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/x86_64-pc-windows-msvc/release/giaa.exe
+            rules.yaml

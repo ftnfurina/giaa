@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Coordinate",
+  "description": "坐标数据",
+  "type": "object",
+  "properties": {
+    "data": {
+      "title": "数据",
+      "$ref": "#/$defs/CoordinateData"
+    },
+    "description": {
+      "title": "描述",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "resolution": {
+      "title": "适配分辨率",
+      "$ref": "#/$defs/Size"
+    }
+  },
+  "required": [
+    "resolution",
+    "data"
+  ],
+  "$defs": {
+    "CoordinateData": {
+      "description": "坐标点位数据",
+      "type": "object",
+      "properties": {
+        "artifact_count": {
+          "title": "圣遗物数量识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_detail_center": {
+          "title": "圣遗物详情卡片中心点",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_detail_scroll_to_top_length": {
+          "title": "圣遗物详情卡片滚动到顶部长度",
+          "type": "integer",
+          "format": "int32"
+        },
+        "artifact_equipped": {
+          "title": "圣遗物是否装备识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_filter_button": {
+          "title": "圣遗物筛选按钮点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_filter_confirm_button": {
+          "title": "圣遗物筛选确认按钮点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_filter_reset_button": {
+          "title": "圣遗物筛选重置按钮点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_level": {
+          "title": "圣遗物等级识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_list_card_check_start": {
+          "title": "圣遗物列表卡片检查起始点(第一行第一列右上角)",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_list_card_check_width": {
+          "title": "圣遗物列表卡片检查区域宽度(判断区域是否为卡片)",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_list_card_horizontal_interval": {
+          "title": "圣遗物列表卡片水平间隔(两圣遗物中心点间隔)",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_list_card_start": {
+          "title": "圣遗物列表卡片起始点(第一行第一列中间偏上)",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_list_card_vertical_interval": {
+          "title": "圣遗物列表卡片垂直间隔(两圣遗物中心点间隔)",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_list_center": {
+          "title": "圣遗物列表卡片中心点",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_list_empty_tip": {
+          "title": "圣遗物列表为空提示区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_list_scroll_to_top_length": {
+          "title": "圣遗物列表滚动到顶部长度",
+          "type": "integer",
+          "format": "int32"
+        },
+        "artifact_lock": {
+          "title": "圣遗物锁定识别点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_main_stat_name": {
+          "title": "圣遗物主词条名称识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_main_stat_value": {
+          "title": "圣遗物主词条数值识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_mark": {
+          "title": "圣遗物标记识别点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_name": {
+          "title": "圣遗物名称识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_page_cols": {
+          "title": "圣遗物每页列数",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_page_rows": {
+          "title": "圣遗物每页行数",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_page_turn": {
+          "title": "圣遗物行是否对齐顶部识别点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_sanctifying_elixir": {
+          "title": "圣遗物祝圣之霜定义识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_sanctifying_elixir_height": {
+          "title": "圣遗物祝圣之霜定义高度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_set_name_height": {
+          "title": "圣遗物套装名称识别高度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_set_name_width": {
+          "title": "圣遗物套装名称识别宽度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_set_name_x": {
+          "title": "圣遗物套装名称识别横坐标",
+          "type": "integer",
+          "format": "int32"
+        },
+        "artifact_slot": {
+          "title": "圣遗物部位名称识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "artifact_stars_horizontal_interval": {
+          "title": "圣遗物星级星星水平间隔",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_stars_start": {
+          "title": "圣遗物星级起始识别点位",
+          "$ref": "#/$defs/Point"
+        },
+        "artifact_sub_stat_height": {
+          "title": "圣遗物副词条高度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_sub_stat_start": {
+          "title": "圣遗物副词条起始识别区域",
+          "$ref": "#/$defs/Region"
+        },
+        "backpack_name": {
+          "title": "背包名称识别区域",
+          "$ref": "#/$defs/Region"
+        }
+      },
+      "required": [
+        "backpack_name",
+        "artifact_count",
+        "artifact_page_rows",
+        "artifact_page_cols",
+        "artifact_list_card_start",
+        "artifact_list_card_horizontal_interval",
+        "artifact_list_card_vertical_interval",
+        "artifact_list_card_check_start",
+        "artifact_list_card_check_width",
+        "artifact_detail_center",
+        "artifact_detail_scroll_to_top_length",
+        "artifact_list_center",
+        "artifact_list_scroll_to_top_length",
+        "artifact_list_empty_tip",
+        "artifact_name",
+        "artifact_slot",
+        "artifact_main_stat_name",
+        "artifact_main_stat_value",
+        "artifact_stars_start",
+        "artifact_stars_horizontal_interval",
+        "artifact_sanctifying_elixir",
+        "artifact_sanctifying_elixir_height",
+        "artifact_level",
+        "artifact_lock",
+        "artifact_mark",
+        "artifact_sub_stat_start",
+        "artifact_sub_stat_height",
+        "artifact_set_name_x",
+        "artifact_set_name_width",
+        "artifact_set_name_height",
+        "artifact_equipped",
+        "artifact_page_turn",
+        "artifact_filter_button",
+        "artifact_filter_reset_button",
+        "artifact_filter_confirm_button"
+      ]
+    },
+    "Point": {
+      "description": "点坐标",
+      "type": "object",
+      "properties": {
+        "x": {
+          "title": "X 坐标",
+          "type": "integer",
+          "format": "int32"
+        },
+        "y": {
+          "title": "Y 坐标",
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "Region": {
+      "description": "区域\n\n左上角坐标为 `start`，右下角坐标为 `end`",
+      "type": "object",
+      "properties": {
+        "end": {
+          "title": "区域右下角坐标",
+          "$ref": "#/$defs/Point"
+        },
+        "start": {
+          "title": "区域左上角坐标",
+          "$ref": "#/$defs/Point"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "Size": {
+      "description": "尺寸",
+      "type": "object",
+      "properties": {
+        "height": {
+          "title": "高度",
+          "type": "integer",
+          "format": "int32"
+        },
+        "width": {
+          "title": "宽度",
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ]
+    }
+  }
+}

@@ -1,0 +1,145 @@
+resolution:
+  height: 1080
+  width: 1920
+description: 适配 1920x1080 分辨率的坐标 (16:9)
+data:
+  backpack_name:
+    start:
+      x: 141
+      y: 34
+    end:
+      x: 216
+      y: 60
+  artifact_count:
+    start:
+      x: 1620
+      y: 34
+    end:
+      x: 1799
+      y: 59
+
+  artifact_page_rows: 5
+  artifact_page_cols: 8
+
+  artifact_list_card_start:
+    x: 179
+    y: 202
+  artifact_list_card_horizontal_interval: 146
+  artifact_list_card_vertical_interval: 176
+
+  artifact_list_card_check_start:
+    x: 242
+    y: 180
+  artifact_list_card_check_width: 20
+
+  artifact_detail_center:
+    x: 1551
+    y: 539
+  artifact_detail_scroll_to_top_length: -200
+  artifact_list_center:
+    x: 689
+    y: 567
+  artifact_list_scroll_to_top_length: -2000
+
+  artifact_list_empty_tip:
+    start:
+      x: 671
+      y: 478
+    end:
+      x: 1247
+      y: 544
+
+  artifact_name:
+    start:
+      x: 1334
+      y: 128
+    end:
+      x: 1772
+      y: 164
+  artifact_slot:
+    start:
+      x: 1334
+      y: 189
+    end:
+      x: 1401
+      y: 213
+  artifact_main_stat_name:
+    start:
+      x: 1334
+      y: 271
+    end:
+      x: 1499
+      y: 295
+  artifact_main_stat_value:
+    start:
+      x: 1334
+      y: 300
+    end:
+      x: 1499
+      y: 347
+
+  artifact_stars_start:
+    x: 1350
+    y: 373
+  artifact_stars_horizontal_interval: 33
+
+  artifact_sanctifying_elixir:
+    start:
+      x: 1362
+      y: 412
+    end:
+      x: 1493
+      y: 437
+  artifact_sanctifying_elixir_height: 38
+
+  artifact_level:
+    start:
+      x: 1339
+      y: 429
+    end:
+      x: 1390
+      y: 454
+
+  artifact_lock:
+    x: 1684
+    y: 430
+  artifact_mark:
+    x: 1741
+    y: 430
+
+  artifact_sub_stat_start:
+    start:
+      x: 1359
+      y: 479
+    end:
+      x: 1687
+      y: 509
+  artifact_sub_stat_height: 40
+
+  artifact_set_name_x: 1334
+  artifact_set_name_width: 216
+  artifact_set_name_height: 30
+
+  artifact_equipped:
+    start:
+      x: 1387
+      y: 916
+    end:
+      x: 1621
+      y: 944
+
+  artifact_page_turn:
+    x: 179
+    y: 162
+
+  artifact_filter_button:
+    x: 168
+    y: 1015
+
+  artifact_filter_reset_button:
+    x: 159
+    y: 1017
+
+  artifact_filter_confirm_button:
+    x: 454
+    y: 1017
