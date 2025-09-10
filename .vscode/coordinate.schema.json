@@ -117,6 +117,10 @@
           "title": "圣遗物标记识别点位",
           "$ref": "#/$defs/Point"
         },
+        "artifact_mark_top_right": {
+          "title": "圣遗物标记右上角识别区域(用于区分圣遗物和祝圣油膏)",
+          "$ref": "#/$defs/Region"
+        },
         "artifact_name": {
           "title": "圣遗物名称识别区域",
           "$ref": "#/$defs/Region"
@@ -219,6 +223,7 @@
         "artifact_level",
         "artifact_lock",
         "artifact_mark",
+        "artifact_mark_top_right",
         "artifact_sub_stat_start",
         "artifact_sub_stat_height",
         "artifact_set_name_x",

@@ -8,7 +8,10 @@ use ocr::{Ocr, OcrResult};
 use parser::Expr;
 
 use crate::{
-    args::Args, artifact::Artifact, color::color_distance, converter::Converter,
+    args::Args,
+    artifact::{Artifact, ArtifactEnhancementMaterial},
+    color::{average_color_diff, color_distance},
+    converter::Converter,
     rule_expr::RuleExpr,
 };
 
@@ -27,6 +30,12 @@ pub struct ArtifactIdentify {
     pub set_name: bool,
     pub equipped: bool,
     pub level: bool,
+}
+
+#[derive(Debug)]
+pub enum IdentifyResult {
+    Artifact(Artifact),                                       // 圣遗物
+    ArtifactEnhancementMaterial(ArtifactEnhancementMaterial), // 圣遗物增强材料-祝圣精华/油膏
 }
 
 impl ArtifactIdentify {
@@ -195,6 +204,15 @@ impl<'a> Identifier<'a> {
             .to_rgb())
     }
 
+    fn is_artifact(&self) -> Result<bool> {
+        let region = &self.coordinate_data.artifact_mark_top_right;
+        let image = self
+            .converter
+            .crop_region(&self.screenshot.borrow(), region)?;
+        let average_diff = average_color_diff(&image);
+        Ok(average_diff > 0)
+    }
+
     /// 识别圣遗物名称
     fn identify_artifact_name(&self) -> Result<String> {
         if self.artifact_identify.name {
@@ -217,7 +235,7 @@ impl<'a> Identifier<'a> {
                 return Ok(slot.text);
             }
             if self.args.strict_mode {
-                return Err(anyhow!("未识别到圣遗物槽位: {}", slot.text));
+                return Err(anyhow!("未识别到圣遗物部位: {}", slot.text));
             }
         }
         Ok(String::new())
@@ -407,9 +425,17 @@ impl<'a> Identifier<'a> {
     /// # 参数
     ///
     /// * `screenshot` - 截图
-    pub fn identify(&self, screenshot: &RgbaImage) -> Result<Artifact> {
+    pub fn identify(&self, screenshot: &RgbaImage) -> Result<IdentifyResult> {
         // todo 添加 OCR 置信度校验
         self.screenshot.replace(screenshot.clone());
+
+        // 检查是否是圣遗物
+        let is_artifact = self.is_artifact()?;
+        if !is_artifact {
+            let stars = self.identify_artifact_stars()?;
+            let material = ArtifactEnhancementMaterial { stars };
+            return Ok(IdentifyResult::ArtifactEnhancementMaterial(material));
+        }
 
         let mut offset: i32 = 0;
 
@@ -439,7 +465,7 @@ impl<'a> Identifier<'a> {
         let set_name = self.identify_artifact_set_name(offset)?;
         let equipped = self.identify_artifact_equipped()?;
 
-        Ok(Artifact {
+        let artifact = Artifact {
             name,
             slot,
             main_stat,
@@ -452,6 +478,8 @@ impl<'a> Identifier<'a> {
             locked,
             sanctifying_elixir,
             level,
-        })
+        };
+
+        Ok(IdentifyResult::Artifact(artifact))
     }
 }

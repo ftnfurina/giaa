@@ -83,3 +83,20 @@ impl Artifact {
         return result;
     }
 }
+
+#[derive(Debug)]
+// 圣遗物升级材料-祝圣精华/油膏
+pub struct ArtifactEnhancementMaterial {
+    pub stars: f32,
+}
+
+impl fmt::Display for ArtifactEnhancementMaterial {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let name = if self.stars == 4.0 {
+            "祝圣精华"
+        } else {
+            "祝圣油膏"
+        };
+        write!(f, "{}", name)
+    }
+}

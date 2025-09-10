@@ -5,7 +5,7 @@ use crate::{
     args::Args,
     color::{average_color_diff, color_distance},
     converter::Converter,
-    identifier::Identifier,
+    identifier::{Identifier, IdentifyResult},
 };
 use anyhow::{Context, Result, anyhow};
 use common::{Point, Region, point_to_square_region, str_to_number};
@@ -296,11 +296,16 @@ impl<'a> Scanner<'a> {
                 self.check_has_artifact_card(col, row)?;
 
                 match self.identifier.identify(&self.screenshot) {
-                    Ok(mut artifact) => {
-                        info!("识别到: {}", artifact);
-                        self.actuator.exec(&mut artifact)?;
-                        thread::sleep(std::time::Duration::from_millis(100));
-                    }
+                    Ok(artifact_result) => match artifact_result {
+                        IdentifyResult::Artifact(mut artifact) => {
+                            info!("识别到: {}", artifact);
+                            self.actuator.exec(&mut artifact)?;
+                            thread::sleep(std::time::Duration::from_millis(100));
+                        }
+                        IdentifyResult::ArtifactEnhancementMaterial(material) => {
+                            info!("识别到: {}", material);
+                        }
+                    },
                     Err(e) => {
                         error!("识别圣遗物失败: {}", e);
                     }

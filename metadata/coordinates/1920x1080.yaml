@@ -106,6 +106,13 @@ data:
   artifact_mark:
     x: 1741
     y: 430
+  artifact_mark_top_right:
+    start:
+      x: 1760
+      y: 407
+    end:
+      x: 1790
+      y: 437
 
   artifact_sub_stat_start:
     start:

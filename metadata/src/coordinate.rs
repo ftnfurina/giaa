@@ -67,6 +67,8 @@ pub struct CoordinateData {
     pub artifact_lock: Point,
     #[schemars(title = "圣遗物标记识别点位")]
     pub artifact_mark: Point,
+    #[schemars(title = "圣遗物标记右上角识别区域(用于区分圣遗物和祝圣油膏)")]
+    pub artifact_mark_top_right: Region,
 
     #[schemars(title = "圣遗物副词条起始识别区域")]
     pub artifact_sub_stat_start: Region,

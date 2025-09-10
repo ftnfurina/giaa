@@ -11,7 +11,7 @@ use ort::{
     session::{Session, SessionOutputs, builder::GraphOptimizationLevel},
     value::TensorRef,
 };
-use tracing::debug;
+use tracing::{debug, error};
 
 use crate::ocr::{Ocr, OcrResult};
 
@@ -136,7 +136,15 @@ impl PPOcr {
 
         let text: String = filtered_idx
             .iter()
-            .map(|&idx| self.character_dict[idx - 1].clone())
+            .map(|&idx| {
+                let text = self.character_dict.get(idx - 1);
+                if let Some(text) = text {
+                    text.to_string()
+                } else {
+                    error!("找不到字符字典索引: {}", idx - 1);
+                    String::from("")
+                }
+            })
             .collect::<String>()
             .trim()
             .to_string();
