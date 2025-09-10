@@ -134,6 +134,10 @@
         "sub_stats_count": {
           "title": "副词条个数",
           "type": "string"
+        },
+        "unactivated": {
+          "title": "待激活",
+          "type": "string"
         }
       },
       "required": [
@@ -146,6 +150,7 @@
         "sanctifying_elixir",
         "main_stat",
         "sub_stats_count",
+        "unactivated",
         "no_match_artifacts"
       ]
     }

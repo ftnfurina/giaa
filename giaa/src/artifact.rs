@@ -2,6 +2,14 @@ use std::{collections::HashMap, fmt};
 
 use metadata::ARTIFACT_INFO;
 
+/// 圣遗物副词条
+#[derive(Debug, Clone)]
+pub struct ArtifactSubStat {
+    pub name: String,
+    pub value: f32,
+    pub unactivated: bool,
+}
+
 /// 圣遗物识别信息
 #[derive(Debug, Clone)]
 pub struct Artifact {
@@ -14,7 +22,7 @@ pub struct Artifact {
     pub level: f32,
     pub marked: bool,
     pub locked: bool,
-    pub sub_stats: Vec<(String, f32)>,
+    pub sub_stats: Vec<ArtifactSubStat>,
     pub set_name: String,
     pub equipped: bool,
 }
@@ -35,7 +43,14 @@ impl fmt::Display for Artifact {
             self.locked,
             self.sub_stats
                 .iter()
-                .map(|(name, value)| format!("{}:{}", name, value))
+                .map(|sub_stat| {
+                    let unactivated = if sub_stat.unactivated {
+                        format!("({})", ARTIFACT_INFO.words.unactivated)
+                    } else {
+                        String::new()
+                    };
+                    format!("{}:{}{}", sub_stat.name, sub_stat.value, unactivated)
+                })
                 .collect::<Vec<String>>()
                 .join(", "),
             self.set_name,
@@ -62,7 +77,7 @@ impl Artifact {
         result.insert(ARTIFACT_INFO.words.equipped.clone(), self.equipped);
         result.insert(ARTIFACT_INFO.words.marked.clone(), self.marked);
         result.insert(ARTIFACT_INFO.words.locked.clone(), self.locked);
-        return result;
+        result
     }
 
     /// 获取圣遗物数值类型的数据
@@ -78,15 +93,18 @@ impl Artifact {
             format!("{}:{}", ARTIFACT_INFO.words.main_stat, self.main_stat),
             self.main_stat_value,
         );
-        for (name, value) in self.sub_stats.iter() {
-            result.insert(name.clone(), *value);
+        for sub_stat in self.sub_stats.iter() {
+            result.insert(sub_stat.name.clone(), sub_stat.value);
         }
         result.insert(
             ARTIFACT_INFO.words.sub_stats_count.clone(),
-            self.sub_stats.len() as f32,
+            self.sub_stats
+                .iter()
+                .filter(|sub_stat| !sub_stat.unactivated)
+                .count() as f32,
         );
 
-        return result;
+        result
     }
 }
 

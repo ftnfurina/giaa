@@ -9,7 +9,7 @@ use parser::Expr;
 
 use crate::{
     args::Args,
-    artifact::{Artifact, ArtifactEnhancementMaterial},
+    artifact::{Artifact, ArtifactEnhancementMaterial, ArtifactSubStat},
     color::{average_color_diff, color_distance},
     converter::Converter,
     rule_expr::RuleExpr,
@@ -345,11 +345,11 @@ impl<'a> Identifier<'a> {
     /// # 参数
     ///
     /// * `offset` - 偏移量
-    fn identify_artifact_sub_stats(&self, offset: i32) -> Result<Vec<(String, f32)>> {
+    fn identify_artifact_sub_stats(&self, offset: i32) -> Result<Vec<ArtifactSubStat>> {
         if !self.artifact_identify.sub_stats {
             return Ok(vec![]);
         }
-        let mut result = vec![];
+        let mut result: Vec<ArtifactSubStat> = vec![];
         for i in 0..4 {
             let sub_stat_name = self.ocr_region_offset_y(
                 self.coordinate_data.artifact_sub_stat_start,
@@ -369,10 +369,16 @@ impl<'a> Identifier<'a> {
                     continue;
                 }
             }
-            let value = str_to_number(&stat_value[1..]);
+            let value = &stat_value[1..];
+            let unactivated: bool = value.contains(&ARTIFACT_INFO.words.unactivated);
+            let value = str_to_number(value);
 
             if let Ok(value) = value {
-                result.push((name, value));
+                result.push(ArtifactSubStat {
+                    name,
+                    value,
+                    unactivated,
+                });
             } else if self.args.strict_mode {
                 return Err(anyhow!("未识别到属性值: {}", sub_stat_name.text));
             }

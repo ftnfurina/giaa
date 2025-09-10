@@ -45,6 +45,8 @@ pub struct ArtifactWord {
     pub main_stat: String,
     #[schemars(title = "副词条个数")]
     pub sub_stats_count: String,
+    #[schemars(title = "待激活")]
+    pub unactivated: String,
 
     #[schemars(title = "暂无满足条件的圣遗物")]
     pub no_match_artifacts: String,

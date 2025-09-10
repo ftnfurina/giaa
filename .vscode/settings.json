@@ -15,6 +15,7 @@
     "schemars",
     "serde",
     "setuptools",
+    "unactivated",
     "windowinfo",
     "xcap"
   ],
