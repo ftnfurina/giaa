@@ -25,10 +25,14 @@ impl PPOcr {
     /// 创建 PPOcr 实例
     pub fn new() -> Result<PPOcr> {
         let model_bytes = include_bytes!("../PP-OCRv4_mobile_rec_infer.onnx");
-        let character_dict = include_str!("../character_dict.txt")
+        let mut character_dict: Vec<String> = include_str!("../character_dict.txt")
             .lines()
             .map(String::from)
             .collect();
+
+        // 加入空行, 修复 include_str!().lines() 尾行空行被吞问题
+        character_dict.push(String::from(""));
+
         let session = Session::builder()?
             .with_optimization_level(GraphOptimizationLevel::Level3)?
             .with_intra_threads(4)?

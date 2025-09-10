@@ -1292,7 +1292,7 @@ dependencies = [
 
 [[package]]
 name = "giaa"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "clap",
@@ -2268,7 +2268,7 @@ dependencies = [
 
 [[package]]
 name = "ocr"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "image",

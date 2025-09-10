@@ -335,7 +335,9 @@ impl<'a> Scanner<'a> {
             }
             self.window.scroll_vertical(1)?;
         }
-        Err(anyhow!("调整超出预期"))
+        Err(anyhow!(
+            "调整超出预期, 可能是滚动异常或是圣遗物添加了筛选条件"
+        ))
     }
 
     /// 计算移动所需行数的滚轮次数
