@@ -1,8 +1,9 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fs, path::Path};
 
 use lazy_static::lazy_static;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use tracing::info;
 
 /// 圣遗物名称
 #[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
@@ -164,7 +165,13 @@ impl ArtifactInfo {
 
 lazy_static! {
     pub static ref ARTIFACT_INFO: ArtifactInfo = {
-        let yaml_str = include_str!("../artifact_info.yaml");
+        let artifact_info_file = Path::new("artifact_info.yaml");
+        let yaml_str: String = if artifact_info_file.exists() {
+            info!("加载本地 artifact_info.yaml 文件");
+            fs::read_to_string(artifact_info_file).unwrap()
+        } else {
+            String::from(include_str!("../artifact_info.yaml"))
+        };
         let mut artifact_info: ArtifactInfo = serde_yaml::from_str(&yaml_str).unwrap();
         artifact_info.update_artifact_name_map();
         artifact_info.update_artifact_set_name_map();

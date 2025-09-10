@@ -37,6 +37,28 @@
 4. 打开游戏, 进入圣背包-圣遗物界面
 5. 运行程序等待执行完成
 
+**圣遗物名称或套装名无法识别的情况**
+
+1. 请将日志等级设置为 `debug` 并再次尝试, 找到未识别圣遗物的OCR识别结果
+```shell
+giaa -l debug
+```
+2. 拷贝圣遗物信息文件 [artifact_info.yaml](./metadata/artifact_info.yaml) 到你程序目录下
+```diff
+workspace
+ ├── giaa.exe
++├── artifact_info.yaml
+ └── rules.yaml
+```
+3. 依据 OCR 识别结果修改 `artifact_info.yaml` 文件, 增加或修改圣遗物别名信息
+```diff
+# 例如: "烬城勇者绘卷" 无法识别, OCR 识别结果为 "炽城勇者绘卷", 则修改如下:
+sets:
+  - name: 烬城勇者绘卷
++    alias:
++      - 炽城勇者绘卷
+```
+
 ## 运行项目
 
 1. 安装 Rust 环境
