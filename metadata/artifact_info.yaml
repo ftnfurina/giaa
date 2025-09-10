@@ -455,3 +455,17 @@ sets:
         alias:
           - 深廊的赐之宴
       - name: 深廊的遂失之冕
+  - name: 纺月的夜歌
+    artifacts:
+      - name: 流离者的晶泪
+      - name: 受福者的白羽
+      - name: 祭霜者的迷狂
+      - name: 至纯者的欢荣
+      - name: 司信者的圣冕
+  - name: 穹境示现之夜
+    artifacts:
+      - name: 渴真之花
+      - name: 深罪之羽
+      - name: 谕告之钟
+      - name: 满溢之壶
+      - name: 永劫之冕
