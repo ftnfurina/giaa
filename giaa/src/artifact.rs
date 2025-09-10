@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fmt};
 
-use metadata::ArtifactWord;
+use metadata::ARTIFACT_INFO;
 
 /// 圣遗物识别信息
 #[derive(Debug, Clone)]
@@ -50,15 +50,18 @@ impl Artifact {
     /// # 参数
     ///
     /// * `words` - 圣遗物词条信息名称
-    pub fn get_boolean_maps(&self, words: &ArtifactWord) -> HashMap<String, bool> {
+    pub fn get_boolean_maps(&self) -> HashMap<String, bool> {
         let mut result = HashMap::new();
         result.insert(self.name.clone(), true);
         result.insert(self.slot.clone(), true);
         result.insert(self.set_name.clone(), true);
-        result.insert(words.sanctifying_elixir.clone(), self.sanctifying_elixir);
-        result.insert(words.equipped.clone(), self.equipped);
-        result.insert(words.marked.clone(), self.marked);
-        result.insert(words.locked.clone(), self.locked);
+        result.insert(
+            ARTIFACT_INFO.words.sanctifying_elixir.clone(),
+            self.sanctifying_elixir,
+        );
+        result.insert(ARTIFACT_INFO.words.equipped.clone(), self.equipped);
+        result.insert(ARTIFACT_INFO.words.marked.clone(), self.marked);
+        result.insert(ARTIFACT_INFO.words.locked.clone(), self.locked);
         return result;
     }
 
@@ -67,18 +70,21 @@ impl Artifact {
     /// # 参数
     ///
     /// * `words` - 圣遗物词条信息名称
-    pub fn get_number_maps(&self, words: &ArtifactWord) -> HashMap<String, f32> {
+    pub fn get_number_maps(&self) -> HashMap<String, f32> {
         let mut result = HashMap::new();
-        result.insert(words.star.clone(), self.stars);
-        result.insert(words.level.clone(), self.level);
+        result.insert(ARTIFACT_INFO.words.star.clone(), self.stars);
+        result.insert(ARTIFACT_INFO.words.level.clone(), self.level);
         result.insert(
-            format!("{}:{}", words.main_stat, self.main_stat),
+            format!("{}:{}", ARTIFACT_INFO.words.main_stat, self.main_stat),
             self.main_stat_value,
         );
         for (name, value) in self.sub_stats.iter() {
             result.insert(name.clone(), *value);
         }
-        result.insert(words.sub_stats_count.clone(), self.sub_stats.len() as f32);
+        result.insert(
+            ARTIFACT_INFO.words.sub_stats_count.clone(),
+            self.sub_stats.len() as f32,
+        );
 
         return result;
     }

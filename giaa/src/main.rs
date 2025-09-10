@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::{Result, anyhow};
-use metadata::{ArtifactInfo, Coordinate, Rule};
+use metadata::ARTIFACT_INFO;
+use metadata::{Coordinate, Rule};
 use ocr::PPOcr;
 use parser::ExprVarKey;
 use parser::Parser;
@@ -51,12 +52,9 @@ fn application() -> Result<()> {
         return Err(anyhow!("规则文件 {} 为空, 请添加规则内容", args.rules_file));
     }
 
-    // 圣遗物信息
-    let artifact_info = ArtifactInfo::new()?;
-
     let var_key = ExprVarKey::new(
-        artifact_info.get_boolean_keys(),
-        artifact_info.get_number_keys(),
+        ARTIFACT_INFO.get_boolean_keys(),
+        ARTIFACT_INFO.get_number_keys(),
     );
 
     // 表达式解析器
@@ -65,7 +63,7 @@ fn application() -> Result<()> {
     // 规则解析
     let rule_exprs = RuleExpr::from_rules(&rules, &parser)?;
     // 圣遗物属性识别筛选
-    let artifact_identify = ArtifactIdentify::filter(&rule_exprs, &artifact_info)?;
+    let artifact_identify = ArtifactIdentify::filter(&rule_exprs)?;
     // OCR 识别
     let pp_ocr = PPOcr::new()?;
 
@@ -84,19 +82,11 @@ fn application() -> Result<()> {
         &converter,
         &pp_ocr,
         &coordinate.data,
-        &artifact_info,
         &artifact_identify,
         &args,
     )?;
     // 动作执行器
-    let actuator = Actuator::new(
-        &parser,
-        &win_window,
-        &converter,
-        &artifact_info,
-        &rule_exprs,
-        &coordinate,
-    )?;
+    let actuator = Actuator::new(&parser, &win_window, &converter, &rule_exprs, &coordinate)?;
     // 圣遗物扫描器
     let mut scanner = Scanner::new(
         &converter,
@@ -104,7 +94,6 @@ fn application() -> Result<()> {
         &identifier,
         &actuator,
         &pp_ocr,
-        &artifact_info,
         &win_window,
         &args,
     )?;

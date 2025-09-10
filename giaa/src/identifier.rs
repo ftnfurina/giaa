@@ -3,7 +3,7 @@ use std::{cell::RefCell, collections::HashSet};
 use anyhow::{Result, anyhow};
 use common::{Point, Region, point_offset, region_offset, remove_special_char, str_to_number};
 use image::{Pixel, Rgb, RgbaImage};
-use metadata::{ArtifactInfo, CoordinateData};
+use metadata::{ARTIFACT_INFO, CoordinateData};
 use ocr::{Ocr, OcrResult};
 use parser::Expr;
 
@@ -60,8 +60,7 @@ impl ArtifactIdentify {
     /// # 参数
     ///
     /// * `rule_exprs` - 规则表达式
-    /// * `artifact_info` - 圣遗物信息
-    pub fn filter(rule_exprs: &Vec<RuleExpr>, artifact_info: &ArtifactInfo) -> Result<Self> {
+    pub fn filter(rule_exprs: &Vec<RuleExpr>) -> Result<Self> {
         let mut all_keys = HashSet::new();
         let mut di = Self::default();
 
@@ -71,41 +70,41 @@ impl ArtifactIdentify {
             all_keys.extend(var_keys.number_keys);
         }
 
-        for name in artifact_info.get_artifact_names() {
+        for name in ARTIFACT_INFO.get_artifact_names() {
             if all_keys.contains(&name) {
                 di.name = true;
                 break;
             }
         }
 
-        for slot in artifact_info.slots.iter() {
+        for slot in ARTIFACT_INFO.slots.iter() {
             if all_keys.contains(slot) {
                 di.slot = true;
                 break;
             }
         }
 
-        if all_keys.contains(&artifact_info.words.star) {
+        if all_keys.contains(&ARTIFACT_INFO.words.star) {
             di.stars = true;
         }
 
-        if all_keys.contains(&artifact_info.words.level) {
+        if all_keys.contains(&ARTIFACT_INFO.words.level) {
             di.level = true;
         }
 
-        for set_name in artifact_info.get_artifact_set_names() {
+        for set_name in ARTIFACT_INFO.get_artifact_set_names() {
             if all_keys.contains(&set_name) {
                 di.set_name = true;
                 break;
             }
         }
 
-        if all_keys.contains(&artifact_info.words.sub_stats_count) {
+        if all_keys.contains(&ARTIFACT_INFO.words.sub_stats_count) {
             di.sub_stats_count = true;
         }
 
-        for stat in artifact_info.stats.iter() {
-            if all_keys.contains(&format!("{}:{}", artifact_info.words.main_stat, stat)) {
+        for stat in ARTIFACT_INFO.stats.iter() {
+            if all_keys.contains(&format!("{}:{}", ARTIFACT_INFO.words.main_stat, stat)) {
                 di.main_stat = true;
                 di.main_stat_value = true;
             }
@@ -119,7 +118,7 @@ impl ArtifactIdentify {
             di.sub_stats = true;
         }
 
-        if all_keys.contains(&artifact_info.words.equipped) {
+        if all_keys.contains(&ARTIFACT_INFO.words.equipped) {
             di.equipped = true;
         }
 
@@ -132,7 +131,6 @@ pub struct Identifier<'a> {
     converter: &'a Converter<'a>,
     ocr: &'a dyn Ocr,
     coordinate_data: &'a CoordinateData,
-    artifact_info: &'a ArtifactInfo,
     artifact_identify: &'a ArtifactIdentify,
     args: &'a Args,
     screenshot: RefCell<RgbaImage>,
@@ -146,13 +144,11 @@ impl<'a> Identifier<'a> {
     /// * `converter` - 坐标转换器
     /// * `ocr` - 文字识别器
     /// * `coordinate_data` - 坐标信息
-    /// * `artifact_info` - 圣遗物信息
     /// * `artifact_identify` - 识别属性
     pub fn new(
         converter: &'a Converter,
         ocr: &'a dyn Ocr,
         coordinate_data: &'a CoordinateData,
-        artifact_info: &'a ArtifactInfo,
         artifact_identify: &'a ArtifactIdentify,
         args: &'a Args,
     ) -> Result<Self> {
@@ -160,7 +156,6 @@ impl<'a> Identifier<'a> {
             converter,
             ocr,
             coordinate_data,
-            artifact_info,
             artifact_identify,
             args,
             screenshot: RefCell::new(RgbaImage::new(0, 0)),
@@ -217,7 +212,7 @@ impl<'a> Identifier<'a> {
     fn identify_artifact_name(&self) -> Result<String> {
         if self.artifact_identify.name {
             let name = self.ocr_region(&self.coordinate_data.artifact_name)?;
-            if let Some(name) = self.artifact_info.get_artifact_name_by_alias(&name.text) {
+            if let Some(name) = ARTIFACT_INFO.get_artifact_name_by_alias(&name.text) {
                 return Ok(name);
             }
             if self.args.strict_mode {
@@ -231,7 +226,7 @@ impl<'a> Identifier<'a> {
     fn identify_artifact_slot(&self) -> Result<String> {
         if self.artifact_identify.slot {
             let slot = self.ocr_region(&self.coordinate_data.artifact_slot)?;
-            if self.artifact_info.slots.contains(&slot.text) {
+            if ARTIFACT_INFO.slots.contains(&slot.text) {
                 return Ok(slot.text);
             }
             if self.args.strict_mode {
@@ -245,7 +240,7 @@ impl<'a> Identifier<'a> {
     fn identify_artifact_main_stat(&self) -> Result<String> {
         if self.artifact_identify.main_stat {
             let main_stat = self.ocr_region(&self.coordinate_data.artifact_main_stat_name)?;
-            if self.artifact_info.stats.contains(&main_stat.text) {
+            if ARTIFACT_INFO.stats.contains(&main_stat.text) {
                 return Ok(main_stat.text);
             }
             if self.args.strict_mode {
@@ -296,7 +291,7 @@ impl<'a> Identifier<'a> {
     /// 识别圣遗物是否为祝圣之霜定义
     fn identify_artifact_sanctifying_elixir(&self) -> Result<bool> {
         let elixir = self.ocr_region(&self.coordinate_data.artifact_sanctifying_elixir)?;
-        Ok(self.artifact_info.words.sanctifying_elixir == elixir.text)
+        Ok(ARTIFACT_INFO.words.sanctifying_elixir == elixir.text)
     }
 
     /// 识别圣遗物等级
@@ -367,7 +362,7 @@ impl<'a> Identifier<'a> {
             let (stat_name, stat_value) = sub_stat_name.text.split_at(plus_index.unwrap());
             let name = stat_name.trim().to_string();
 
-            if !self.artifact_info.stats.contains(&name) {
+            if !ARTIFACT_INFO.stats.contains(&name) {
                 if self.args.strict_mode {
                     return Err(anyhow!("未识别到属性名称: {}", sub_stat_name.text));
                 } else {
@@ -402,7 +397,7 @@ impl<'a> Identifier<'a> {
             };
             let set_name = self.ocr_region_offset_y(Region { start, end }, offset)?;
             let set_name = remove_special_char(&set_name.text);
-            if let Some(set_name) = self.artifact_info.get_artifact_set_name_by_alias(&set_name) {
+            if let Some(set_name) = ARTIFACT_INFO.get_artifact_set_name_by_alias(&set_name) {
                 return Ok(set_name);
             } else if self.args.strict_mode {
                 return Err(anyhow!("未识别到套装名称: {}", set_name));
@@ -417,7 +412,7 @@ impl<'a> Identifier<'a> {
             return Ok(false);
         }
         let equipped = self.ocr_region(&self.coordinate_data.artifact_equipped)?;
-        Ok(equipped.text.contains(&self.artifact_info.words.equipped))
+        Ok(equipped.text.contains(&ARTIFACT_INFO.words.equipped))
     }
 
     /// 识别圣遗物信息

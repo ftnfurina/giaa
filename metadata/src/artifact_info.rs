@@ -1,6 +1,6 @@
-use std::{cell::RefCell, collections::HashMap};
+use std::collections::HashMap;
 
-use anyhow::Result;
+use lazy_static::lazy_static;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -51,7 +51,7 @@ pub struct ArtifactWord {
 }
 
 /// 圣遗物信息
-#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
+#[derive(JsonSchema, Serialize, Deserialize, Debug)]
 pub struct ArtifactInfo {
     #[schemars(title = "圣遗物部位名称")]
     pub slots: Vec<String>,
@@ -62,59 +62,52 @@ pub struct ArtifactInfo {
     #[schemars(title = "圣遗物词汇")]
     pub words: ArtifactWord,
     #[serde(skip)]
-    artifact_name_map_cache: RefCell<HashMap<String, String>>,
+    artifact_name_map: HashMap<String, String>,
     #[serde(skip)]
-    artifact_set_names_cache: RefCell<HashMap<String, String>>,
+    artifact_set_name_map: HashMap<String, String>,
 }
 
 impl ArtifactInfo {
-    /// 加载解析圣遗物信息文件
-    pub fn new() -> Result<Self> {
-        Ok(serde_yaml::from_str(include_str!("../artifact_info.yaml"))?)
-    }
-
     /// 获取所有圣遗物名称映射
-    fn get_artifact_name_map(&self) -> HashMap<String, String> {
-        let mut map_cache = self.artifact_name_map_cache.borrow_mut();
-        if map_cache.is_empty() {
-            for set in self.sets.iter() {
-                for artifact in set.artifacts.iter() {
-                    map_cache.insert(artifact.name.clone(), artifact.name.clone());
-                    if let Some(alias) = &artifact.alias {
-                        for name in alias.iter() {
-                            map_cache.insert(name.clone(), artifact.name.clone());
-                        }
+    fn update_artifact_name_map(&mut self) {
+        self.artifact_name_map.clear();
+        for set in self.sets.iter() {
+            for artifact in set.artifacts.iter() {
+                self.artifact_name_map
+                    .insert(artifact.name.clone(), artifact.name.clone());
+                if let Some(alias) = &artifact.alias {
+                    for name in alias.iter() {
+                        self.artifact_name_map
+                            .insert(name.clone(), artifact.name.clone());
                     }
                 }
             }
         }
-        map_cache.clone()
     }
 
     /// 获取所有圣遗物套装名称映射
-    fn get_artifact_set_name_map(&self) -> HashMap<String, String> {
-        let mut map_cache = self.artifact_set_names_cache.borrow_mut();
-        if map_cache.is_empty() {
-            for set in self.sets.iter() {
-                map_cache.insert(set.name.clone(), set.name.clone());
-                if let Some(alias) = &set.alias {
-                    for name in alias.iter() {
-                        map_cache.insert(name.clone(), set.name.clone());
-                    }
+    fn update_artifact_set_name_map(&mut self) {
+        self.artifact_set_name_map.clear();
+        for set in self.sets.iter() {
+            self.artifact_set_name_map
+                .insert(set.name.clone(), set.name.clone());
+            if let Some(alias) = &set.alias {
+                for name in alias.iter() {
+                    self.artifact_set_name_map
+                        .insert(name.clone(), set.name.clone());
                 }
             }
         }
-        map_cache.clone()
     }
 
     /// 获取所有圣遗物名称, 不包含别名
     pub fn get_artifact_names(&self) -> Vec<String> {
-        self.get_artifact_name_map().values().cloned().collect()
+        self.artifact_name_map.values().cloned().collect()
     }
 
     /// 获取所有圣遗物套装名称, 不包含别名
     pub fn get_artifact_set_names(&self) -> Vec<String> {
-        self.get_artifact_set_name_map().values().cloned().collect()
+        self.artifact_set_name_map.values().cloned().collect()
     }
 
     /// 通过别名获取圣遗物名称
@@ -123,7 +116,7 @@ impl ArtifactInfo {
     ///
     /// * `alias` - 圣遗物别名
     pub fn get_artifact_name_by_alias(&self, alias: &str) -> Option<String> {
-        self.get_artifact_name_map().get(alias).cloned()
+        self.artifact_name_map.get(alias).cloned()
     }
 
     /// 通过别名获取圣遗物套装名称
@@ -132,7 +125,7 @@ impl ArtifactInfo {
     ///
     /// * `alias` - 圣遗物套装别名
     pub fn get_artifact_set_name_by_alias(&self, alias: &str) -> Option<String> {
-        self.get_artifact_set_name_map().get(alias).cloned()
+        self.artifact_set_name_map.get(alias).cloned()
     }
 
     /// 获取所有布尔型关键字
@@ -165,4 +158,14 @@ impl ArtifactInfo {
         }
         result
     }
+}
+
+lazy_static! {
+    pub static ref ARTIFACT_INFO: ArtifactInfo = {
+        let yaml_str = include_str!("../artifact_info.yaml");
+        let mut artifact_info: ArtifactInfo = serde_yaml::from_str(&yaml_str).unwrap();
+        artifact_info.update_artifact_name_map();
+        artifact_info.update_artifact_set_name_map();
+        artifact_info
+    };
 }

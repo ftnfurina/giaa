@@ -10,7 +10,7 @@ use crate::{
 use anyhow::{Context, Result, anyhow};
 use common::{Point, Region, point_to_square_region, str_to_number};
 use image::{Pixel, RgbaImage};
-use metadata::{ArtifactInfo, CoordinateData};
+use metadata::{ARTIFACT_INFO, CoordinateData};
 use ocr::{Ocr, OcrResult};
 use tracing::{debug, error, info};
 use window::Window;
@@ -30,7 +30,6 @@ pub struct Scanner<'a> {
     identifier: &'a Identifier<'a>,
     actuator: &'a Actuator<'a>,
     ocr: &'a dyn Ocr,
-    artifact_info: &'a ArtifactInfo,
     window: &'a dyn Window,
     args: &'a Args,
     screenshot: RgbaImage,
@@ -50,7 +49,6 @@ impl<'a> Scanner<'a> {
     /// * `identifier` - 圣遗物识别器
     /// * `actuator` - 动作执行器
     /// * `ocr` - 文字识别器
-    /// * `artifact_info` - 圣遗物信息
     /// * `window` - 窗口接口
     /// * `args` - 程序参数
     pub fn new(
@@ -59,7 +57,6 @@ impl<'a> Scanner<'a> {
         identifier: &'a Identifier<'a>,
         actuator: &'a Actuator<'a>,
         ocr: &'a dyn Ocr,
-        artifact_info: &'a ArtifactInfo,
         window: &'a dyn Window,
         args: &'a Args,
     ) -> Result<Self> {
@@ -69,7 +66,6 @@ impl<'a> Scanner<'a> {
             identifier,
             actuator,
             ocr,
-            artifact_info,
             window,
             args,
             screenshot: RgbaImage::new(0, 0),
@@ -133,7 +129,7 @@ impl<'a> Scanner<'a> {
     fn init_backpack(&mut self) -> Result<()> {
         info!("开始初始化背包状态");
         let name = self.ocr_region(&self.coordinate_data.backpack_name)?;
-        if name.text != self.artifact_info.words.artifact {
+        if name.text != ARTIFACT_INFO.words.artifact {
             return Err(anyhow!("未识别到圣遗物窗口"));
         }
 
@@ -164,7 +160,7 @@ impl<'a> Scanner<'a> {
     fn check_artifact_list_empty_tip(&mut self) -> Result<()> {
         self.refresh_screenshot()?;
         let list_empty_tip = self.ocr_region(&self.coordinate_data.artifact_list_empty_tip)?;
-        if list_empty_tip.text == self.artifact_info.words.no_match_artifacts {
+        if list_empty_tip.text == ARTIFACT_INFO.words.no_match_artifacts {
             return Err(anyhow!("圣遗物列表为空, 请重置筛选或者更改筛选条件后重试"));
         }
         Ok(())

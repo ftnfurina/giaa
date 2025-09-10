@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::{Ok, Result};
 use common::{Point, point_offset};
-use metadata::{ArtifactInfo, Coordinate, RuleAction};
+use metadata::{ARTIFACT_INFO, Coordinate, RuleAction};
 use parser::{ExprResult, ExprVar, ExprVarKey, Parser};
 use tracing::info;
 use window::Window;
@@ -14,7 +14,6 @@ pub struct Actuator<'a> {
     parser: &'a Parser,
     coordinate: &'a Coordinate,
     converter: &'a Converter<'a>,
-    artifact_info: &'a ArtifactInfo,
     window: &'a dyn Window,
     rule_exprs: &'a Vec<RuleExpr>,
 }
@@ -27,14 +26,12 @@ impl<'a> Actuator<'a> {
     /// * `parser` - 表达式解析器
     /// * `window` - 窗口接口
     /// * `converter` - 坐标转换器
-    /// * `artifact_info` - 圣遗物信息
     /// * `rule_exprs` - 规则与表达式映射列表
     /// * `coordinate` - 坐标数据
     pub fn new(
         parser: &'a Parser,
         window: &'a dyn Window,
         converter: &'a Converter,
-        artifact_info: &'a ArtifactInfo,
         rule_exprs: &'a Vec<RuleExpr>,
         coordinate: &'a Coordinate,
     ) -> Result<Self> {
@@ -42,7 +39,6 @@ impl<'a> Actuator<'a> {
             parser: parser,
             window,
             converter,
-            artifact_info,
             rule_exprs,
             coordinate,
         })
@@ -143,27 +139,24 @@ impl<'a> Actuator<'a> {
     fn generate_vars(&self, artifact: &Artifact, expr_var_key: &ExprVarKey) -> ExprVar {
         // 布尔变量
         let mut boolean_vars = HashMap::new();
-        for name in self.artifact_info.get_artifact_names() {
+        for name in ARTIFACT_INFO.get_artifact_names() {
             boolean_vars.insert(name, false);
         }
-        for slot in self.artifact_info.slots.iter() {
+        for slot in ARTIFACT_INFO.slots.iter() {
             boolean_vars.insert(slot.clone(), false);
         }
-        for set_name in self.artifact_info.get_artifact_set_names() {
+        for set_name in ARTIFACT_INFO.get_artifact_set_names() {
             boolean_vars.insert(set_name, false);
         }
-        boolean_vars.extend(artifact.get_boolean_maps(&self.artifact_info.words));
+        boolean_vars.extend(artifact.get_boolean_maps());
 
         // 数字变量
         let mut number_vars = HashMap::new();
-        for stat in self.artifact_info.stats.iter() {
+        for stat in ARTIFACT_INFO.stats.iter() {
             number_vars.insert(stat.clone(), 0.0);
-            number_vars.insert(
-                format!("{}:{}", self.artifact_info.words.main_stat, stat),
-                0.0,
-            );
+            number_vars.insert(format!("{}:{}", ARTIFACT_INFO.words.main_stat, stat), 0.0);
         }
-        number_vars.extend(artifact.get_number_maps(&self.artifact_info.words));
+        number_vars.extend(artifact.get_number_maps());
 
         // 筛选表达式所需要的变量
         let boolean_vars = boolean_vars
