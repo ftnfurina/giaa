@@ -96,3 +96,4 @@ giaa
 + https://github.com/GreatV/oar-ocr
 + https://github.com/wormtql/yas
 + https://github.com/PaddlePaddle/PaddleOCR
++ https://github.com/dvaJi/genshin-data
