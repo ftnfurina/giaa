@@ -9,6 +9,13 @@ use window::Window;
 
 use crate::{artifact::Artifact, converter::Converter, rule_expr::RuleExpr};
 
+#[derive(Debug)]
+pub enum ActuatorResult {
+    UnlockAndUnmark,
+    OnlyLock,
+    LockAndMark,
+}
+
 /// 动作执行器, 依据规则表达式和圣遗物识别信息, 执行动作
 pub struct Actuator<'a> {
     parser: &'a Parser,
@@ -191,7 +198,7 @@ impl<'a> Actuator<'a> {
     /// # 参数
     ///
     /// * `artifact` - 圣遗物
-    pub fn exec(&self, artifact: &mut Artifact) -> Result<()> {
+    pub fn exec(&self, artifact: &mut Artifact) -> Result<ActuatorResult> {
         // 保留圣遗物原始状态
         let before_artifact = artifact.clone();
 
@@ -237,19 +244,22 @@ impl<'a> Actuator<'a> {
         }
 
         // 更改状态
-        if artifact.locked {
+        let result = if artifact.locked {
             if artifact.marked {
                 self.handle_lock_and_mark(&before_artifact)?;
+                ActuatorResult::LockAndMark
             } else {
                 self.handle_only_lock(&before_artifact)?;
+                ActuatorResult::OnlyLock
             }
         } else {
             if artifact.marked {
                 unreachable!("不存在未锁定但标记的圣遗物")
             } else {
                 self.handle_un_lock_and_mark(&before_artifact)?;
+                ActuatorResult::UnlockAndUnmark
             }
-        }
-        Ok(())
+        };
+        Ok(result)
     }
 }

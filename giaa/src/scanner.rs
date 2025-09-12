@@ -1,7 +1,7 @@
 use std::{thread, time::Duration};
 
 use crate::{
-    actuator::Actuator,
+    actuator::{Actuator, ActuatorResult},
     args::Args,
     color::{average_color_diff, color_distance},
     converter::Converter,
@@ -37,6 +37,7 @@ pub struct Scanner<'a> {
     row_index: u32,
     page_scroll_count: u32,
     artifact_page_turn_color: image::Rgb<u8>,
+    actuator_results: Vec<ActuatorResult>,
 }
 
 impl<'a> Scanner<'a> {
@@ -73,6 +74,7 @@ impl<'a> Scanner<'a> {
             row_index: 0,
             page_scroll_count: 0,
             artifact_page_turn_color: image::Rgb([0, 0, 0]),
+            actuator_results: vec![],
         })
     }
 
@@ -295,7 +297,8 @@ impl<'a> Scanner<'a> {
                     Ok(artifact_result) => match artifact_result {
                         IdentifyResult::Artifact(mut artifact) => {
                             info!("识别到: {}", artifact);
-                            self.actuator.exec(&mut artifact)?;
+                            let actuator_result = self.actuator.exec(&mut artifact)?;
+                            self.actuator_results.push(actuator_result);
                             thread::sleep(std::time::Duration::from_millis(100));
                         }
                         IdentifyResult::ArtifactEnhancementMaterial(material) => {
@@ -420,11 +423,35 @@ impl<'a> Scanner<'a> {
         Ok(())
     }
 
+    fn print_actuator_results(&self) -> Result<()> {
+        let mut lock_and_mark_count = 0;
+        let mut only_lock_count = 0;
+        let mut unlock_and_unmark_count = 0;
+        for result in self.actuator_results.iter() {
+            match result {
+                ActuatorResult::LockAndMark => lock_and_mark_count += 1,
+                ActuatorResult::OnlyLock => only_lock_count += 1,
+                ActuatorResult::UnlockAndUnmark => unlock_and_unmark_count += 1,
+            }
+        }
+        info!(
+            "执行动作结果: 标记(标记和锁定): {}个, 仅锁定: {}个, 未锁定(未标记和未锁定): {}个",
+            lock_and_mark_count, only_lock_count, unlock_and_unmark_count
+        );
+        Ok(())
+    }
+
     /// 开始扫描
     pub fn scan(&mut self) -> Result<()> {
         self.refresh_screenshot()?;
         self.init_backpack()?;
         self.generate_action_jobs()?;
-        self.execute_action_jobs()
+        match self.execute_action_jobs() {
+            Err(e) => {
+                error!("扫描存在异常: {}", e);
+            }
+            _ => {}
+        }
+        self.print_actuator_results()
     }
 }
