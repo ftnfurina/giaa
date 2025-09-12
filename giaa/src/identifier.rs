@@ -199,7 +199,7 @@ impl<'a> Identifier<'a> {
             .to_rgb())
     }
 
-    fn is_artifact(&self) -> Result<bool> {
+    fn has_mark_button(&self) -> Result<bool> {
         let region = &self.coordinate_data.artifact_mark_top_right;
         let image = self
             .converter
@@ -265,8 +265,8 @@ impl<'a> Identifier<'a> {
         Ok(0.0)
     }
 
-    /// 识别圣遗物星级
-    fn identify_artifact_stars(&self) -> Result<f32> {
+    /// 识别物品星级
+    fn identify_stars(&self) -> Result<f32> {
         if !self.artifact_identify.stars {
             return Ok(0.0);
         }
@@ -430,27 +430,26 @@ impl<'a> Identifier<'a> {
         // todo 添加 OCR 置信度校验
         self.screenshot.replace(screenshot.clone());
 
-        // 检查是否是圣遗物
-        let is_artifact = self.is_artifact()?;
-        if !is_artifact {
-            let stars = self.identify_artifact_stars()?;
-            let material = ArtifactEnhancementMaterial { stars };
-            return Ok(IdentifyResult::ArtifactEnhancementMaterial(material));
-        }
-
         let mut offset: i32 = 0;
+        let sanctifying_elixir = self.identify_artifact_sanctifying_elixir()?;
+
+        if sanctifying_elixir {
+            offset += self.coordinate_data.artifact_sanctifying_elixir_height as i32;
+        } else {
+            // 普通圣遗物或者祝圣之霜
+            // 是否存在标记按钮
+            if !self.has_mark_button()? {
+                let stars = self.identify_stars()?;
+                let material = ArtifactEnhancementMaterial { stars };
+                return Ok(IdentifyResult::ArtifactEnhancementMaterial(material));
+            }
+        }
 
         let name = self.identify_artifact_name()?;
         let slot = self.identify_artifact_slot()?;
         let main_stat = self.identify_artifact_main_stat()?;
         let main_stat_value = self.identify_artifact_main_stat_value()?;
-        let stars = self.identify_artifact_stars()?;
-
-        let sanctifying_elixir = self.identify_artifact_sanctifying_elixir()?;
-        if sanctifying_elixir {
-            offset += self.coordinate_data.artifact_sanctifying_elixir_height as i32;
-        }
-
+        let stars = self.identify_stars()?;
         let level = self.identify_artifact_level(offset)?;
         let marked = self.identify_artifact_marked(offset)?;
         let locked = self.identify_artifact_locked(offset)?;
