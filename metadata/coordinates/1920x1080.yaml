@@ -25,7 +25,12 @@ data:
     x: 179
     y: 202
   artifact_list_card_horizontal_interval: 146
-  artifact_list_card_vertical_interval: 176
+  artifact_list_card_vertical_interval: 175
+  artifact_list_height: 800
+  artifact_list_scrollbar_start:
+    x: 1288
+    y: 179
+  artifact_list_scrollbar_height: 760
 
   artifact_list_card_check_start:
     x: 242

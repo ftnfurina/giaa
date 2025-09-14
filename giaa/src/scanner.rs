@@ -7,20 +7,19 @@ use crate::{
     converter::Converter,
     identifier::{Identifier, IdentifyResult},
 };
-use anyhow::{Context, Result, anyhow};
-use common::{Point, Region, point_to_square_region, str_to_number};
-use image::{Pixel, RgbaImage};
+use anyhow::{Result, anyhow};
+use common::{Point, Region, point_offset, point_to_square_region};
+use image::{Pixel, Rgb, RgbaImage};
 use metadata::{ARTIFACT_INFO, CoordinateData};
 use ocr::{Ocr, OcrResult};
 use tracing::{debug, error, info};
 use window::Window;
 
-/// 动作任务
-#[derive(Debug, Clone)]
-enum ActionJob {
-    AscIdentify(u32, u32),  // 识别 X 行, 最后一行Y列
-    DescIdentify(u32, u32), // 倒序识别 X 行, 第一行 Y 列, 其余行取列宽
-    MoveRows(u32),          // 移动 N 行
+#[derive(Debug)]
+struct Scrollbar {
+    height: i32,
+    button_height: i32,
+    scroll_length: i32,
 }
 
 /// 扫描器
@@ -33,9 +32,9 @@ pub struct Scanner<'a> {
     window: &'a dyn Window,
     args: &'a Args,
     screenshot: RgbaImage,
-    action_jobs: Vec<ActionJob>,
     row_index: u32,
     page_scroll_count: u32,
+    scroll_count: u32,
     artifact_page_turn_color: image::Rgb<u8>,
     actuator_results: Vec<ActuatorResult>,
 }
@@ -70,9 +69,9 @@ impl<'a> Scanner<'a> {
             window,
             args,
             screenshot: RgbaImage::new(0, 0),
-            action_jobs: Vec::new(),
             row_index: 0,
             page_scroll_count: 0,
+            scroll_count: 0,
             artifact_page_turn_color: image::Rgb([0, 0, 0]),
             actuator_results: vec![],
         })
@@ -168,59 +167,67 @@ impl<'a> Scanner<'a> {
         Ok(())
     }
 
-    /// 获取圣遗物总数
-    fn identify_artifact_count(&self) -> Result<u32> {
-        let count = self.ocr_region(&self.coordinate_data.artifact_count)?;
-        if !count.text.contains("/") {
-            return Err(anyhow!("未识别到圣遗物数量"));
-        }
-        let count = count.text.split("/").next().context("未识别到圣遗物数量")?;
-
-        str_to_number(count)
+    /// 获取坐标点的颜色
+    ///
+    /// # 参数
+    ///
+    /// * `point` - 坐标点
+    fn get_pixel_color(&self, point: &Point) -> Result<Rgb<u8>> {
+        let point = self.converter.translate_point(point, false)?;
+        Ok(self
+            .screenshot
+            .get_pixel(point.x as u32, point.y as u32)
+            .to_rgb())
     }
 
-    /// 生成动作任务
-    pub fn generate_action_jobs(&mut self) -> Result<()> {
-        let count = self.identify_artifact_count()?;
-        info!("扫描到背包共有 {} 个圣遗物", count);
+    /// 获取滚动条
+    fn get_scrollbar(&self) -> Result<Scrollbar> {
+        let scrollbar_start = &self.coordinate_data.artifact_list_scrollbar_start;
+        let height = self.coordinate_data.artifact_list_scrollbar_height as i32;
+        let button_color = Rgb([210, 210, 210]);
+        let mut scroll_length = 0;
+        let mut button_end_y = 0;
+        let mut is_start = false;
 
-        let page_rows = self.coordinate_data.artifact_page_rows;
-        let page_cols = self.coordinate_data.artifact_page_cols;
-        let page_count = page_rows * page_cols;
-        let mut page_index = 1;
-
-        let mut row_index = 0;
-        let mut less_count: i32 = 0;
-
-        'outer: loop {
-            for row in 0..page_rows {
-                for col in 0..page_cols {
-                    let now_count = row_index * page_cols + col + 1;
-                    less_count = count as i32 - now_count as i32;
-                    if now_count == count {
-                        if page_index == 1 {
-                            self.action_jobs
-                                .push(ActionJob::AscIdentify(row + 1, col + 1));
-                        } else {
-                            self.action_jobs.push(ActionJob::MoveRows(row + 1));
-                            self.action_jobs
-                                .push(ActionJob::DescIdentify(row + 1, col + 1));
-                        }
-                        break 'outer;
-                    }
+        for y in 0..height {
+            let point = point_offset(&scrollbar_start, None, Some(y));
+            let color = self.get_pixel_color(&point)?;
+            let diff = color_distance(&color, &button_color);
+            if diff < 10000 {
+                if !is_start {
+                    scroll_length = y;
+                    is_start = true;
+                } else {
+                    button_end_y = y;
                 }
-                row_index += 1;
-            }
-            page_index += 1;
-            self.action_jobs
-                .push(ActionJob::AscIdentify(page_rows, page_cols));
-            if less_count >= page_count as i32 {
-                self.action_jobs.push(ActionJob::MoveRows(page_rows));
             }
         }
 
-        debug!("生成扫描任务: {:?}", self.action_jobs);
-        Ok(())
+        let button_height = button_end_y - scroll_length;
+
+        Ok(Scrollbar {
+            height,
+            button_height,
+            scroll_length,
+        })
+    }
+
+    /// 获取圣遗物列表总行数
+    fn get_artifact_list_total_rows(&self) -> Result<u32> {
+        let scrollbar = self.get_scrollbar()?;
+        let total_rows = if self.row_index > self.coordinate_data.artifact_page_rows - 1 {
+            // 高行数准确
+            (scrollbar.height - scrollbar.button_height) as f32 / scrollbar.scroll_length as f32
+                * self.scroll_count as f32
+                / (self.scroll_count as f32 / self.row_index as f32)
+                + self.coordinate_data.artifact_page_rows as f32
+        } else {
+            // 低行数准确
+            scrollbar.height as f32 / scrollbar.button_height as f32
+                * self.coordinate_data.artifact_list_height as f32
+                / self.coordinate_data.artifact_list_card_vertical_interval as f32
+        };
+        Ok(total_rows.floor() as u32)
     }
 
     /// 检查当前点位是否存在圣遗物卡片
@@ -229,7 +236,11 @@ impl<'a> Scanner<'a> {
     ///
     /// * `col` - 列数
     /// * `row` - 行数
-    fn check_has_artifact_card(&mut self, col: u32, row: u32) -> Result<()> {
+    ///
+    /// # 返回值
+    ///
+    /// 圣遗物卡片是否存在
+    fn check_has_artifact_card(&mut self, col: u32, row: u32) -> Result<bool> {
         let click_point = Point {
             x: self.coordinate_data.artifact_list_card_check_start.x
                 + (col * self.coordinate_data.artifact_list_card_horizontal_interval) as i32,
@@ -245,35 +256,25 @@ impl<'a> Scanner<'a> {
         let image = self.converter.crop_region(&self.screenshot, &regin)?;
         let diff = average_color_diff(&image);
         debug!("圣遗物卡片颜色平均差异: {}", diff);
-        if diff < 10 {
-            return Err(anyhow!(
-                "未发现圣遗物卡片, 可能是滚动异常或是圣遗物添加了筛选条件"
-            ));
-        }
-        Ok(())
+        Ok(diff > 10)
     }
 
-    /// 识别指定行列的圣遗物
+    /// 识别当前页的圣遗物
     ///
     /// # 参数
     ///
     /// * `start` - 起始行
     /// * `count` - 识别行数
     /// * `last_count` - 最后一行识别列数
-    fn asc_identify_row_col(&mut self, start: u32, count: u32, last_count: u32) -> Result<()> {
-        info!(
-            "开始识别当前页, 起始行: {}, 识别行数: {}, 最后一行列数: {}",
-            start, count, last_count
-        );
+    ///
+    /// # 返回值
+    ///
+    /// 是否是完整的页
+    fn identify_now_page(&mut self, start: u32, count: u32) -> Result<bool> {
+        info!("识别当前页, 起始行: {}, 识别行数: {} ", start, count);
 
         for row in start..start + count {
-            let col_count = if row == start + count - 1 {
-                last_count
-            } else {
-                self.coordinate_data.artifact_page_cols
-            };
-
-            for col in 0..col_count {
+            for col in 0..self.coordinate_data.artifact_page_cols {
                 let center = Point {
                     x: self.coordinate_data.artifact_list_card_start.x
                         + (col * self.coordinate_data.artifact_list_card_horizontal_interval)
@@ -291,7 +292,9 @@ impl<'a> Scanner<'a> {
                 self.refresh_screenshot()?;
 
                 // 检查是否有圣遗物卡片
-                self.check_has_artifact_card(col, row)?;
+                if !self.check_has_artifact_card(col, row)? {
+                    return Ok(false);
+                }
 
                 match self.identifier.identify(&self.screenshot) {
                     Ok(artifact_result) => match artifact_result {
@@ -311,7 +314,7 @@ impl<'a> Scanner<'a> {
                 }
             }
         }
-        Ok(())
+        Ok(true)
     }
 
     /// 获取圣遗物翻页颜色
@@ -338,6 +341,7 @@ impl<'a> Scanner<'a> {
                 return Ok(());
             }
             self.window.scroll_vertical(1)?;
+            self.scroll_count += 1;
         }
         Err(anyhow!(
             "调整超出预期, 可能是滚动异常或是圣遗物添加了筛选条件"
@@ -350,7 +354,7 @@ impl<'a> Scanner<'a> {
     ///
     /// * `row_count` - 行数
     fn calculate_page_scroll_count(&self, row_count: u32) -> u32 {
-        self.page_scroll_count / self.coordinate_data.artifact_page_rows * row_count + 2
+        self.page_scroll_count / self.coordinate_data.artifact_page_rows * row_count
     }
 
     /// 移动一行
@@ -358,8 +362,9 @@ impl<'a> Scanner<'a> {
         let mut changed = false;
         for _ in 0..30 {
             self.window.scroll_vertical(1)?;
-            thread::sleep(Duration::from_millis(150));
             self.page_scroll_count += 1;
+            self.scroll_count += 1;
+            thread::sleep(Duration::from_millis(150));
 
             let color = self.get_artifact_page_turn()?;
             let distance = color_distance(&self.artifact_page_turn_color, &color);
@@ -388,6 +393,7 @@ impl<'a> Scanner<'a> {
         if self.row_index >= rows {
             for _ in 0..self.calculate_page_scroll_count(row_count) {
                 self.window.scroll_vertical(1)?;
+                self.scroll_count += 1;
             }
             self.row_index += row_count;
             self.adjust_row_position()?;
@@ -401,28 +407,31 @@ impl<'a> Scanner<'a> {
         Ok(())
     }
 
-    /// 执行动作任务
-    fn execute_action_jobs(&mut self) -> Result<()> {
-        for job in self.action_jobs.clone().iter() {
-            match job {
-                ActionJob::AscIdentify(row_count, last_row_count) => {
-                    self.asc_identify_row_col(0, *row_count, *last_row_count)?;
-                }
-                ActionJob::DescIdentify(row_count, last_row_count) => {
-                    self.asc_identify_row_col(
-                        self.coordinate_data.artifact_page_rows - *row_count,
-                        *row_count,
-                        *last_row_count,
-                    )?;
-                }
-                ActionJob::MoveRows(row) => {
-                    self.move_rows(*row)?;
-                }
-            };
+    /// 识别圣遗物主
+    fn identify_artifact(&mut self) -> Result<()> {
+        let mut page_rows = self.coordinate_data.artifact_page_rows;
+        loop {
+            let is_full_page = self.identify_now_page(
+                self.coordinate_data.artifact_page_rows - page_rows,
+                page_rows,
+            )?;
+            if !is_full_page {
+                break;
+            }
+            let row_count = self.get_artifact_list_total_rows()?;
+            let remaining_rows =
+                row_count - self.row_index - self.coordinate_data.artifact_page_rows;
+            if remaining_rows == 0 {
+                break;
+            }
+            info!("总行数: {}, 剩余行数: {}", row_count, remaining_rows);
+            page_rows = self.coordinate_data.artifact_page_rows.min(remaining_rows);
+            self.move_rows(page_rows)?;
         }
         Ok(())
     }
 
+    /// 打印处理结果
     fn print_actuator_results(&self) -> Result<()> {
         let mut lock_and_mark_count = 0;
         let mut only_lock_count = 0;
@@ -445,13 +454,7 @@ impl<'a> Scanner<'a> {
     pub fn scan(&mut self) -> Result<()> {
         self.refresh_screenshot()?;
         self.init_backpack()?;
-        self.generate_action_jobs()?;
-        match self.execute_action_jobs() {
-            Err(e) => {
-                error!("扫描存在异常: {}", e);
-            }
-            _ => {}
-        }
+        self.identify_artifact()?;
         self.print_actuator_results()
     }
 }

@@ -96,10 +96,26 @@
           "title": "圣遗物列表为空提示区域",
           "$ref": "#/$defs/Region"
         },
+        "artifact_list_height": {
+          "title": "圣遗物列表高度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
         "artifact_list_scroll_to_top_length": {
           "title": "圣遗物列表滚动到顶部长度",
           "type": "integer",
           "format": "int32"
+        },
+        "artifact_list_scrollbar_height": {
+          "title": "圣遗物列表滚动条高度",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "artifact_list_scrollbar_start": {
+          "title": "圣遗物列表滚动条起始点",
+          "$ref": "#/$defs/Point"
         },
         "artifact_lock": {
           "title": "圣遗物锁定识别点位",
@@ -205,6 +221,9 @@
         "artifact_list_card_start",
         "artifact_list_card_horizontal_interval",
         "artifact_list_card_vertical_interval",
+        "artifact_list_height",
+        "artifact_list_scrollbar_start",
+        "artifact_list_scrollbar_height",
         "artifact_list_card_check_start",
         "artifact_list_card_check_width",
         "artifact_detail_center",

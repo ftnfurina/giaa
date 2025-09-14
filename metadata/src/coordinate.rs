@@ -23,6 +23,12 @@ pub struct CoordinateData {
     pub artifact_list_card_horizontal_interval: u32,
     #[schemars(title = "圣遗物列表卡片垂直间隔(两圣遗物中心点间隔)")]
     pub artifact_list_card_vertical_interval: u32,
+    #[schemars(title = "圣遗物列表高度")]
+    pub artifact_list_height: u32,
+    #[schemars(title = "圣遗物列表滚动条起始点")]
+    pub artifact_list_scrollbar_start: Point,
+    #[schemars(title = "圣遗物列表滚动条高度")]
+    pub artifact_list_scrollbar_height: u32,
 
     #[schemars(title = "圣遗物列表卡片检查起始点(第一行第一列右上角)")]
     pub artifact_list_card_check_start: Point,
