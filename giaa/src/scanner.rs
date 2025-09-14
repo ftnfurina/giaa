@@ -350,20 +350,20 @@ impl<'a> Scanner<'a> {
     ///
     /// * `row_count` - 行数
     fn calculate_page_scroll_count(&self, row_count: u32) -> u32 {
-        (self.page_scroll_count / self.coordinate_data.artifact_page_rows * (row_count + 1)) - 2
+        self.page_scroll_count / self.coordinate_data.artifact_page_rows * row_count + 2
     }
 
     /// 移动一行
     fn move_row(&mut self) -> Result<()> {
         let mut changed = false;
-        for count in 0..30 {
+        for _ in 0..30 {
             self.window.scroll_vertical(1)?;
             thread::sleep(Duration::from_millis(150));
+            self.page_scroll_count += 1;
 
             let color = self.get_artifact_page_turn()?;
             let distance = color_distance(&self.artifact_page_turn_color, &color);
             if changed && distance <= 10 {
-                self.page_scroll_count += count;
                 return Ok(());
             } else if !changed && distance > 10 {
                 changed = true;
