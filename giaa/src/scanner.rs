@@ -259,7 +259,7 @@ impl<'a> Scanner<'a> {
         Ok(diff > 10)
     }
 
-    /// 识别当前页的圣遗物
+    /// 扫描当前页的圣遗物
     ///
     /// # 参数
     ///
@@ -270,7 +270,7 @@ impl<'a> Scanner<'a> {
     /// # 返回值
     ///
     /// 是否是完整的页
-    fn identify_now_page(&mut self, start: u32, count: u32) -> Result<bool> {
+    fn scan_now_page(&mut self, start: u32, count: u32) -> Result<bool> {
         info!("识别当前页, 起始行: {}, 识别行数: {} ", start, count);
 
         for row in start..start + count {
@@ -320,12 +320,7 @@ impl<'a> Scanner<'a> {
     /// 获取圣遗物翻页颜色
     fn get_artifact_page_turn(&mut self) -> Result<image::Rgb<u8>> {
         self.refresh_screenshot()?;
-        let point = self.coordinate_data.artifact_page_turn;
-        let point = self.converter.translate_point(&point, false)?;
-        Ok(self
-            .screenshot
-            .get_pixel(point.x as u32, point.y as u32)
-            .to_rgb())
+        self.get_pixel_color(&self.coordinate_data.artifact_page_turn)
     }
 
     /// 微调行初始位置
@@ -361,6 +356,9 @@ impl<'a> Scanner<'a> {
     fn move_row(&mut self) -> Result<()> {
         let mut changed = false;
         for _ in 0..30 {
+            if self.window.is_mouse_right_down() {
+                return Err(anyhow!("右键强制退出程序"));
+            }
             self.window.scroll_vertical(1)?;
             self.page_scroll_count += 1;
             self.scroll_count += 1;
@@ -407,17 +405,18 @@ impl<'a> Scanner<'a> {
         Ok(())
     }
 
-    /// 识别圣遗物主
-    fn identify_artifact(&mut self) -> Result<()> {
+    /// 扫描所有页
+    fn scan_all_page(&mut self) -> Result<()> {
         let mut page_rows = self.coordinate_data.artifact_page_rows;
         loop {
-            let is_full_page = self.identify_now_page(
+            let is_full_page = self.scan_now_page(
                 self.coordinate_data.artifact_page_rows - page_rows,
                 page_rows,
             )?;
             if !is_full_page {
                 break;
             }
+            self.refresh_screenshot()?;
             let row_count = self.get_artifact_list_total_rows()?;
             let remaining_rows =
                 row_count - self.row_index - self.coordinate_data.artifact_page_rows;
@@ -454,7 +453,7 @@ impl<'a> Scanner<'a> {
     pub fn scan(&mut self) -> Result<()> {
         self.refresh_screenshot()?;
         self.init_backpack()?;
-        self.identify_artifact()?;
+        self.scan_all_page()?;
         self.print_actuator_results()
     }
 }

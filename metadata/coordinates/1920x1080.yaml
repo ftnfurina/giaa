@@ -10,13 +10,6 @@ data:
     end:
       x: 216
       y: 60
-  artifact_count:
-    start:
-      x: 1620
-      y: 34
-    end:
-      x: 1799
-      y: 59
 
   artifact_page_rows: 5
   artifact_page_cols: 8

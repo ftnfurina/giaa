@@ -29,10 +29,6 @@
       "description": "坐标点位数据",
       "type": "object",
       "properties": {
-        "artifact_count": {
-          "title": "圣遗物数量识别区域",
-          "$ref": "#/$defs/Region"
-        },
         "artifact_detail_center": {
           "title": "圣遗物详情卡片中心点",
           "$ref": "#/$defs/Point"
@@ -215,7 +211,6 @@
       },
       "required": [
         "backpack_name",
-        "artifact_count",
         "artifact_page_rows",
         "artifact_page_cols",
         "artifact_list_card_start",

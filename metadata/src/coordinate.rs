@@ -9,8 +9,6 @@ use common::{Point, Region, Size};
 pub struct CoordinateData {
     #[schemars(title = "背包名称识别区域")]
     pub backpack_name: Region,
-    #[schemars(title = "圣遗物数量识别区域")]
-    pub artifact_count: Region,
 
     #[schemars(title = "圣遗物每页行数")]
     pub artifact_page_rows: u32,
