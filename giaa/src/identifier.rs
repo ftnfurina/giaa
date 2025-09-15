@@ -1,6 +1,6 @@
 use std::{cell::RefCell, collections::HashSet};
 
-use anyhow::{Result, anyhow};
+use anyhow::{Result, bail};
 use common::{Point, Region, point_offset, region_offset, remove_special_char, str_to_number};
 use image::{Pixel, Rgb, RgbaImage};
 use metadata::{ARTIFACT_INFO, CoordinateData};
@@ -216,7 +216,7 @@ impl<'a> Identifier<'a> {
                 return Ok(name);
             }
             if self.args.strict_mode {
-                return Err(anyhow!("未识别到圣遗物名称: {}", name.text));
+                bail!("未识别到圣遗物名称: {}", name.text);
             }
         }
         Ok(String::new())
@@ -230,7 +230,7 @@ impl<'a> Identifier<'a> {
                 return Ok(slot.text);
             }
             if self.args.strict_mode {
-                return Err(anyhow!("未识别到圣遗物部位: {}", slot.text));
+                bail!("未识别到圣遗物部位: {}", slot.text);
             }
         }
         Ok(String::new())
@@ -244,7 +244,7 @@ impl<'a> Identifier<'a> {
                 return Ok(main_stat.text);
             }
             if self.args.strict_mode {
-                return Err(anyhow!("未识别到主属性: {}", main_stat.text));
+                bail!("未识别到主属性: {}", main_stat.text);
             }
         }
         Ok(String::new())
@@ -259,7 +259,7 @@ impl<'a> Identifier<'a> {
             if let Ok(value) = value {
                 return Ok(value);
             } else if self.args.strict_mode {
-                return Err(anyhow!("未识别到主属性值: {}", main_stat_value.text));
+                bail!("未识别到主属性值: {}", main_stat_value.text);
             }
         }
         Ok(0.0)
@@ -304,12 +304,12 @@ impl<'a> Identifier<'a> {
             let level = self.ocr_region_offset_y(self.coordinate_data.artifact_level, offset)?;
             if let Ok(level) = str_to_number(&level.text) {
                 if level < 0.0 || level > 20.0 {
-                    return Err(anyhow!("圣遗物等级超出范围: {}", level));
+                    bail!("圣遗物等级超出范围: {}", level);
                 }
 
                 return Ok(level);
             } else if self.args.strict_mode {
-                return Err(anyhow!("未识别到圣遗物等级: {}", level.text));
+                bail!("未识别到圣遗物等级: {}", level.text);
             }
         }
         Ok(0.0)
@@ -364,7 +364,7 @@ impl<'a> Identifier<'a> {
 
             if !ARTIFACT_INFO.stats.contains(&name) {
                 if self.args.strict_mode {
-                    return Err(anyhow!("未识别到属性名称: {}", sub_stat_name.text));
+                    bail!("未识别到属性名称: {}", sub_stat_name.text);
                 } else {
                     continue;
                 }
@@ -380,7 +380,7 @@ impl<'a> Identifier<'a> {
                     unactivated,
                 });
             } else if self.args.strict_mode {
-                return Err(anyhow!("未识别到属性值: {}", sub_stat_name.text));
+                bail!("未识别到属性值: {}", sub_stat_name.text);
             }
         }
         Ok(result)
@@ -406,7 +406,7 @@ impl<'a> Identifier<'a> {
             if let Some(set_name) = ARTIFACT_INFO.get_artifact_set_name_by_alias(&set_name) {
                 return Ok(set_name);
             } else if self.args.strict_mode {
-                return Err(anyhow!("未识别到套装名称: {}", set_name));
+                bail!("未识别到套装名称: {}", set_name);
             }
         }
         return Ok(String::new());
@@ -455,7 +455,7 @@ impl<'a> Identifier<'a> {
         let locked = self.identify_artifact_locked(offset)?;
 
         if marked && !locked {
-            return Err(anyhow!("圣遗物扫描出已标记未锁定的异常状态"));
+            bail!("圣遗物扫描出已标记未锁定的异常状态");
         }
 
         let sub_stats = self.identify_artifact_sub_stats(offset)?;

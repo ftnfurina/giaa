@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::{Result, anyhow};
+use anyhow::{Result, bail};
 use metadata::ARTIFACT_INFO;
 use metadata::{Coordinate, Rule};
 use ocr::PPOcr;
@@ -46,11 +46,11 @@ fn application() -> Result<()> {
     }
 
     if !Path::new(&args.rules_file).exists() {
-        return Err(anyhow!("规则文件 {} 不存在", args.rules_file));
+        bail!("规则文件 {} 不存在", args.rules_file);
     }
     let rules = Rule::load(&args.rules_file)?;
     if rules.is_empty() {
-        return Err(anyhow!("规则文件 {} 为空, 请添加规则内容", args.rules_file));
+        bail!("规则文件 {} 为空, 请添加规则内容", args.rules_file);
     }
 
     let var_key = ExprVarKey::new(

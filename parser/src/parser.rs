@@ -1,3 +1,4 @@
+use anyhow::bail;
 use anyhow::{Error, Result, anyhow};
 use rust_decimal::prelude::Decimal;
 use rust_decimal::prelude::FromPrimitive;
@@ -43,12 +44,12 @@ impl Parser {
         match expr {
             Expr::NumberVariable(name) => {
                 if !self.var_key.number_keys.contains(&name.to_string()) {
-                    return Err(anyhow!("数字变量 '{}' 不受支持", name));
+                    bail!("数字变量 '{}' 不受支持", name);
                 }
             }
             Expr::BooleanVariable(name) => {
                 if !self.var_key.boolean_keys.contains(&name.to_string()) {
-                    return Err(anyhow!("布尔变量 '{}' 不受支持", name));
+                    bail!("布尔变量 '{}' 不受支持", name);
                 }
             }
             Expr::Plus(left, right)

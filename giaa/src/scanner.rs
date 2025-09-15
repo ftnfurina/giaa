@@ -8,7 +8,7 @@ use crate::{
     error::GiaaError,
     identifier::{Identifier, IdentifyResult},
 };
-use anyhow::{Result, anyhow};
+use anyhow::{Result, anyhow, bail};
 use common::{Point, Region, point_offset, point_to_square_region};
 use image::{Pixel, Rgb, RgbaImage};
 use metadata::{ARTIFACT_INFO, CoordinateData};
@@ -132,7 +132,7 @@ impl<'a> Scanner<'a> {
         info!("开始初始化背包状态");
         let name = self.ocr_region(&self.coordinate_data.backpack_name)?;
         if name.text != ARTIFACT_INFO.words.artifact {
-            return Err(anyhow!("未识别到背包圣遗界面"));
+            bail!("未识别到背包圣遗界面");
         }
 
         if self.args.reset_filter {
@@ -163,7 +163,7 @@ impl<'a> Scanner<'a> {
         self.refresh_screenshot()?;
         let list_empty_tip = self.ocr_region(&self.coordinate_data.artifact_list_empty_tip)?;
         if list_empty_tip.text == ARTIFACT_INFO.words.no_match_artifacts {
-            return Err(anyhow!("未发现圣遗物"));
+            bail!("未发现圣遗物");
         }
         Ok(())
     }

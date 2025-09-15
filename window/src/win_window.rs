@@ -1,4 +1,4 @@
-use anyhow::{Result, anyhow};
+use anyhow::{Result, anyhow, bail};
 use common::{Point, Size};
 use image::RgbaImage;
 use std::{cell::RefCell, mem, thread, time::Duration};
@@ -199,7 +199,7 @@ impl Window for WinWindow {
         thread::sleep(Duration::from_secs(1));
 
         if !self.window.borrow().is_focused()? {
-            return Err(anyhow!("窗口失去焦点, 无法进行后续操作"));
+            bail!("窗口失去焦点, 无法进行后续操作");
         }
         Ok(())
     }

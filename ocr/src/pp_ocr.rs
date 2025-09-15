@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 
-use anyhow::{Result, anyhow};
+use anyhow::{Result, anyhow, bail};
 use image::{
     RgbaImage,
     imageops::{self, FilterType},
@@ -80,7 +80,7 @@ impl PPOcr {
         let (output_shape, output_data) = outputs[0].try_extract_tensor::<f32>()?;
 
         if output_shape.len() != 3 {
-            return Err(anyhow!("意想不到的输出形状: {:?}", output_shape));
+            bail!("意想不到的输出形状: {:?}", output_shape);
         }
 
         let batch_size_out = output_shape[0] as usize;
@@ -89,7 +89,7 @@ impl PPOcr {
         let expected_len = batch_size_out * seq_len * num_classes;
 
         if output_data.len() != expected_len {
-            return Err(anyhow!("意想不到的输出长度: {}", output_data.len()));
+            bail!("意想不到的输出长度: {}", output_data.len());
         }
 
         let array_view =
