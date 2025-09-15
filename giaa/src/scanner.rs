@@ -5,6 +5,7 @@ use crate::{
     args::Args,
     color::{average_color_diff, color_distance},
     converter::Converter,
+    error::GiaaError,
     identifier::{Identifier, IdentifyResult},
 };
 use anyhow::{Result, anyhow};
@@ -12,7 +13,7 @@ use common::{Point, Region, point_offset, point_to_square_region};
 use image::{Pixel, Rgb, RgbaImage};
 use metadata::{ARTIFACT_INFO, CoordinateData};
 use ocr::{Ocr, OcrResult};
-use tracing::{debug, error, info};
+use tracing::{debug, error, info, warn};
 use window::Window;
 
 #[derive(Debug)]
@@ -131,7 +132,7 @@ impl<'a> Scanner<'a> {
         info!("开始初始化背包状态");
         let name = self.ocr_region(&self.coordinate_data.backpack_name)?;
         if name.text != ARTIFACT_INFO.words.artifact {
-            return Err(anyhow!("未识别到圣遗物窗口"));
+            return Err(anyhow!("未识别到背包圣遗界面"));
         }
 
         if self.args.reset_filter {
@@ -162,7 +163,7 @@ impl<'a> Scanner<'a> {
         self.refresh_screenshot()?;
         let list_empty_tip = self.ocr_region(&self.coordinate_data.artifact_list_empty_tip)?;
         if list_empty_tip.text == ARTIFACT_INFO.words.no_match_artifacts {
-            return Err(anyhow!("圣遗物列表为空, 请重置筛选或者更改筛选条件后重试"));
+            return Err(anyhow!("未发现圣遗物"));
         }
         Ok(())
     }
@@ -270,7 +271,7 @@ impl<'a> Scanner<'a> {
     /// # 返回值
     ///
     /// 是否是完整的页
-    fn scan_now_page(&mut self, start: u32, count: u32) -> Result<bool> {
+    fn scan_now_page(&mut self, start: u32, count: u32) -> Result<bool, GiaaError> {
         info!("识别当前页, 起始行: {}, 识别行数: {} ", start, count);
 
         for row in start..start + count {
@@ -284,7 +285,7 @@ impl<'a> Scanner<'a> {
                 };
 
                 if self.window.is_mouse_right_down() {
-                    return Err(anyhow!("右键强制退出程序"));
+                    return Err(GiaaError::RightClickExit);
                 }
 
                 self.click(&center)?;
@@ -353,11 +354,11 @@ impl<'a> Scanner<'a> {
     }
 
     /// 移动一行
-    fn move_row(&mut self) -> Result<()> {
+    fn move_row(&mut self) -> Result<(), GiaaError> {
         let mut changed = false;
         for _ in 0..30 {
             if self.window.is_mouse_right_down() {
-                return Err(anyhow!("右键强制退出程序"));
+                return Err(GiaaError::RightClickExit);
             }
             self.window.scroll_vertical(1)?;
             self.page_scroll_count += 1;
@@ -372,7 +373,7 @@ impl<'a> Scanner<'a> {
                 changed = true;
             }
         }
-        Err(anyhow!("翻页失败, 超出最大次数"))
+        Err(anyhow!("移动一行失败, 超出最大次数"))?
     }
 
     /// 移动指定行数
@@ -406,7 +407,7 @@ impl<'a> Scanner<'a> {
     }
 
     /// 扫描所有页
-    fn scan_all_page(&mut self) -> Result<()> {
+    fn scan_all_page(&mut self) -> Result<(), GiaaError> {
         let mut page_rows = self.coordinate_data.artifact_page_rows;
         loop {
             let is_full_page = self.scan_now_page(
@@ -453,7 +454,13 @@ impl<'a> Scanner<'a> {
     pub fn scan(&mut self) -> Result<()> {
         self.refresh_screenshot()?;
         self.init_backpack()?;
-        self.scan_all_page()?;
+        self.scan_all_page().or_else(|e| match e {
+            GiaaError::RightClickExit => {
+                warn!("{}", GiaaError::RightClickExit);
+                Ok(())
+            }
+            _ => Err(e),
+        })?;
         self.print_actuator_results()
     }
 }

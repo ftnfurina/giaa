@@ -15,6 +15,7 @@
     "schemars",
     "serde",
     "setuptools",
+    "thiserror",
     "unactivated",
     "windowinfo",
     "xcap"

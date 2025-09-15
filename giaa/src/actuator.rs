@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use common::{Point, point_offset};
 use metadata::{ARTIFACT_INFO, Coordinate, RuleAction};
 use parser::{ExprResult, ExprVar, ExprVarKey, Parser};

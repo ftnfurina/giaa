@@ -23,6 +23,7 @@ mod args;
 mod artifact;
 mod color;
 mod converter;
+mod error;
 mod identifier;
 mod log;
 mod rule_expr;

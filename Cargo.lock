@@ -1304,6 +1304,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_yaml",
+ "thiserror 2.0.16",
  "tracing",
  "tracing-subscriber",
  "window",
