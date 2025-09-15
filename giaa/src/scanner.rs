@@ -257,7 +257,7 @@ impl<'a> Scanner<'a> {
         let image = self.converter.crop_region(&self.screenshot, &regin)?;
         let diff = average_color_diff(&image);
         debug!("圣遗物卡片颜色平均差异: {}", diff);
-        Ok(diff > 10)
+        Ok(diff > 1000)
     }
 
     /// 扫描当前页的圣遗物
